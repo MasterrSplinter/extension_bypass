@@ -90,7 +90,7 @@ Apple bloque les extensions sur Safari mobile et Chrome iOS. Cependant, le navig
 ### 🤖 Android — Via Kiwi Browser
 Sur Android, Google Chrome mobile ne supporte pas les extensions. Le meilleur navigateur (le plus stable et compatible) pour utiliser de vraies extensions d'ordinateur sur mobile est **Kiwi Browser**.
 
-1. Téléchargez **Kiwi Browser** gratuitement sur le Google Play Store.
+1. Téléchargez **Kiwi Browser** gratuitement sur le Google Play Store, ou téléchargez l'APK de la dernière version officielle sur [le dépôt GitHub de Kiwi Browser](https://github.com/kiwibrowser/src.next/releases/tag/14310011181).
 2. Téléchargez ou transférez le fichier `.zip` de la version `chrome` sur votre téléphone.
 3. Ouvrez Kiwi Browser, appuyez sur les trois petits points `⋮` (en haut à droite) et sélectionnez **Extensions**.
 4. Activez le **"Mode développeur"** (Developer mode).
