@@ -167,6 +167,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.tabs.create({ url: 'https://webflix.lol' });
   });
 
+  // ─── Ouvrir la page d'options ────────────────────────────────────────────────
+  const optionsBtn = document.getElementById('optionsBtn');
+  if (optionsBtn) {
+    optionsBtn.addEventListener('click', () => {
+      chrome.runtime.openOptionsPage();
+    });
+  }
+
   // ─── Mettre à jour les règles ────────────────────────────────────────────────
   if (updateRulesBtn) {
     updateRulesBtn.addEventListener('click', async () => {

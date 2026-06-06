@@ -486,6 +486,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true; // Async
   }
 
+  // ── REMOVE_CUSTOM_DOMAIN : Supprimer dynamiquement un site ─
+  if (type === 'REMOVE_CUSTOM_DOMAIN') {
+    const domain = message.domain;
+    chrome.storage.local.get(['custom_domains'], async (data) => {
+      let domains = data.custom_domains || [];
+      if (domains.includes(domain)) {
+        domains = domains.filter(d => d !== domain);
+        await chrome.storage.local.set({ custom_domains: domains });
+        _customDomainsCache = domains;
+        if (domains.length > 0) {
+          await registerCustomDomains(domains);
+        } else {
+          try { await chrome.scripting.unregisterContentScripts({ ids: ['custom_streaming_main', 'custom_streaming_isolated'] }); } catch {}
+        }
+      }
+      sendResponse({ ok: true, custom_domains: domains });
+    });
+    return true; // Async
+  }
+
   return false;
 });
 
