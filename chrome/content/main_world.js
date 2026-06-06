@@ -238,7 +238,36 @@
         senpaiBypassed = true;
       } else if (senpaiFallbackAttempts > 0) {
         // Le bouton continuer a disparu et pas de play (Livewire update en cours)
-      }
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // SECTION E3 : Bypass Webflix (Vidzy)
+  // ══════════════════════════════════════════════════════════════════
+  let webflixBypassed = false;
+  function bypassWebflix() {
+    if (!window.__WFB_ENABLED) return;
+    if (webflixBypassed) return;
+    if (!location.hostname.includes('webflix.lol')) return;
+
+    // Cherche l'encadré de texte indiquant qu'il faut cliquer sur lecture
+    const hasInstructions = Array.from(document.querySelectorAll('p')).some(p => p.textContent.includes('sur Lecture'));
+    if (!hasInstructions) return;
+
+    const playBtn = document.querySelector('button.group.relative.flex');
+    if (playBtn && !playBtn.dataset.wfClicked) {
+      playBtn.dataset.wfClicked = 'true';
+      console.log('[StreamBlocker/MAIN] Webflix : Bouton Play détecté ! Lancement du bypass automatique...');
+      
+      // Clic 1
+      try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+      
+      // Clic 2 (après un délai pour laisser le temps à React et à l'intercepteur de popups)
+      setTimeout(() => {
+        console.log('[StreamBlocker/MAIN] Webflix : Auto-clic 2/2...');
+        try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+        webflixBypassed = true;
+      }, 500);
     }
   }
 
@@ -305,6 +334,8 @@
     }
     if (location.hostname.includes('senpai-stream')) {
       if (!senpaiBypassed) bypassSenpaiStream();
+    } else if (location.hostname.includes('webflix.lol')) {
+      if (!webflixBypassed) bypassWebflix();
     } else {
       bypassGenericStepOverlay();
       hideAdOverlays();
