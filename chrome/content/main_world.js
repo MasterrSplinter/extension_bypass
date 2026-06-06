@@ -294,7 +294,8 @@
           // Ne pas supprimer le conteneur du lecteur vidéo lui-même ni le vrai bouton play
             const elId = (el.id || '').toLowerCase();
             const elClass = (el.className || '').toString().toLowerCase();
-            const isPlayButton = elId.includes('play') || elClass.includes('play');
+            // Rendre l'exception stricte pour ne pas épargner les pubs déguisées sur Senpai
+            const isPlayButton = elId === 'bigplay' || elClass.includes('big-play') || elId === 'play-btn';
             
             if (!el.querySelector('video') && !el.classList.contains('jwplayer') && !isPlayButton) {
             console.log('[StreamBlocker/MAIN] Overlay gant/transparent publicitaire supprim', el);
