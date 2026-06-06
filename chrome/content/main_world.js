@@ -260,12 +260,12 @@
       console.log('[StreamBlocker/MAIN] Webflix : Bouton Play détecté ! Lancement du bypass automatique...');
       
       // Clic 1
-      try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+      try { playBtn.dispatchEvent(new CustomEvent('__wfb_user_click__', { bubbles: true, detail: { isPlayBtn: true } })); _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
       
       // Clic 2 (après un délai pour laisser le temps à React et à l'intercepteur de popups)
       setTimeout(() => {
         console.log('[StreamBlocker/MAIN] Webflix : Auto-clic 2/2...');
-        try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+        try { playBtn.dispatchEvent(new CustomEvent('__wfb_user_click__', { bubbles: true, detail: { isPlayBtn: true } })); _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
         webflixBypassed = true;
       }, 500);
     }
