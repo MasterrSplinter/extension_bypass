@@ -13,6 +13,20 @@
 (function () {
   'use strict';
 
+  // Injection dynamique de main_world.js pour la compatibilité mobile (Kiwi, Orion)
+  function injectMainWorldScript() {
+    try {
+      const script = document.createElement('script');
+      script.src = chrome.runtime.getURL('content/main_world.js');
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    } catch (e) {
+      console.error("[StreamBlocker] Erreur injection main_world:", e);
+    }
+  }
+
+  injectMainWorldScript();
+
   // ══════════════════════════════════════════════════════════════════
   // #0 — ÉTAT DE PROTECTION (SOURCE DE VÉRITÉ)
   // ══════════════════════════════════════════════════════════════════

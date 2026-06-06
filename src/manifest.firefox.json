@@ -10,11 +10,10 @@
     }
   },
   "icons": {
-    "16":  "icons/icon16.png",
-    "48":  "icons/icon48.png",
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
@@ -25,11 +24,9 @@
     "alarms",
     "notifications"
   ],
-
   "host_permissions": [
     "<all_urls>"
   ],
-
   "declarative_net_request": {
     "rule_resources": [
       {
@@ -39,33 +36,7 @@
       }
     ]
   },
-
   "content_scripts": [
-    {
-      "comment": "MAIN WORLD — Sites streaming uniquement (pas les lecteurs Cloudflare)",
-      "matches": [
-        "*://*.webflix.lol/*",
-        "*://*.french-stream.ac/*",
-        "*://*.frenchstream.wtf/*",
-        "*://*.papystreaming.tv/*",
-        "*://*.voiranime.com/*",
-        "*://*.filmcomplet.link/*",
-        "*://*.streamcomplet.app/*",
-        "*://*.wiflix.st/*",
-        "*://*.annuaire-telechargement.art/*",
-        "*://*.dpstreaming.to/*",
-        "*://*.dpstreaming.ink/*",
-        "*://*.cpasmieux.com/*",
-        "*://*.cpasmieux.pro/*",
-        "*://*.zone-telechargement.beauty/*",
-        "*://*.senpai-stream.quest/*"
-      ],
-      "js": ["content/main_world.js"],
-      "run_at": "document_start",
-      "world": "MAIN",
-      "all_frames": true,
-      "match_about_blank": true
-    },
     {
       "comment": "ISOLATED WORLD — Sites streaming uniquement",
       "matches": [
@@ -85,8 +56,12 @@
         "*://*.zone-telechargement.beauty/*",
         "*://*.senpai-stream.quest/*"
       ],
-      "js": ["content/content.js"],
-      "css": ["content/content.css"],
+      "js": [
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "match_about_blank": true
@@ -96,25 +71,29 @@
     "page": "options/options.html",
     "open_in_tab": true
   },
-
   "background": {
-    "scripts": ["background/background.js"]
+    "scripts": [
+      "background/background.js"
+    ]
   },
-
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Streaming AdBlocker Pro",
     "default_icon": {
-      "16":  "icons/icon16.png",
-      "48":  "icons/icon48.png",
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
-
   "web_accessible_resources": [
     {
-      "resources": ["icons/*.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "icons/*.png",
+        "content/main_world.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
