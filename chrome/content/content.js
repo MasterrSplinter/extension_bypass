@@ -225,6 +225,16 @@
       return;
     }
 
+    if (location.hostname.includes('webflix.lol')) {
+      const btn = target.closest('button');
+      if (btn && btn.querySelector('svg.lucide-play')) {
+        console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+    }
+
     if (isAdUrl(target.href)) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -241,6 +251,15 @@
           e.preventDefault();
           return;
         }
+        if (location.hostname.includes('webflix.lol')) {
+          const btn = target.closest('button');
+          if (btn && btn.querySelector('svg.lucide-play')) {
+            console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+          }
+        }
         if (isAdUrl(target.href)) {
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -252,8 +271,13 @@
   // ══════════════════════════════════════════════════════════════════
   // #5 — RELAIS USER_CLICK → Service Worker
   // ══════════════════════════════════════════════════════════════════
-  window.addEventListener('__wfb_user_click__', () => {
+  window.addEventListener('__wfb_user_click__', (e) => {
     try {
+      // Bloquer le clic manuel sur le bouton Play de Webflix pour éviter la popup résiduelle
+      if (location.hostname.includes('webflix.lol') && e.detail && e.detail.isPlayBtn) {
+          console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
+          return;
+      }
       chrome.runtime.sendMessage({ type: 'USER_CLICK' });
     } catch {}
   }, { capture: true, passive: true });
