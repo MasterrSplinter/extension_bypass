@@ -1,0 +1,112 @@
+{
+  "manifest_version": 3,
+  "name": "Webflix AdBlocker Pro",
+  "version": "1.6.0",
+  "description": "Bloque les publicités, popups et redirections sur les sites de streaming — Compatible Manifest V3.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "adblocker@webflix.lol",
+      "strict_min_version": "120.0"
+    }
+  },
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "storage",
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "alarms",
+    "notifications"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_main",
+        "enabled": true,
+        "path": "rules/rules.json"
+      }
+    ]
+  },
+
+  "content_scripts": [
+    {
+      "comment": "MAIN WORLD — Sites streaming uniquement (pas les lecteurs Cloudflare)",
+      "matches": [
+        "*://*.webflix.lol/*",
+        "*://*.french-stream.ac/*",
+        "*://*.frenchstream.wtf/*",
+        "*://*.papystreaming.tv/*",
+        "*://*.voiranime.com/*",
+        "*://*.filmcomplet.link/*",
+        "*://*.streamcomplet.app/*",
+        "*://*.wiflix.st/*",
+        "*://*.annuaire-telechargement.art/*",
+        "*://*.dpstreaming.to/*",
+        "*://*.dpstreaming.ink/*",
+        "*://*.cpasmieux.com/*",
+        "*://*.cpasmieux.pro/*",
+        "*://*.zone-telechargement.beauty/*"
+      ],
+      "js": ["content/main_world.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "comment": "ISOLATED WORLD — Sites streaming uniquement",
+      "matches": [
+        "*://*.webflix.lol/*",
+        "*://*.french-stream.ac/*",
+        "*://*.frenchstream.wtf/*",
+        "*://*.papystreaming.tv/*",
+        "*://*.voiranime.com/*",
+        "*://*.filmcomplet.link/*",
+        "*://*.streamcomplet.app/*",
+        "*://*.wiflix.st/*",
+        "*://*.annuaire-telechargement.art/*",
+        "*://*.dpstreaming.to/*",
+        "*://*.dpstreaming.ink/*",
+        "*://*.cpasmieux.com/*",
+        "*://*.cpasmieux.pro/*",
+        "*://*.zone-telechargement.beauty/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Webflix AdBlocker Pro",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
