@@ -25,4 +25,12 @@ if (Test-Path -Path "src\manifest.firefox.json") {
     Copy-Item -Path "src\manifest.firefox.json" -Destination "dist\firefox\manifest.json"
 }
 
+# Zipper les extensions pour l'installation sur mobile ou manuelle
+if (Test-Path -Path dist\chrome.zip) { Remove-Item -Force dist\chrome.zip }
+if (Test-Path -Path dist\firefox.zip) { Remove-Item -Force dist\firefox.zip }
+
+Compress-Archive -Path "dist\chrome\*" -DestinationPath "dist\chrome.zip" -Force
+Compress-Archive -Path "dist\firefox\*" -DestinationPath "dist\firefox.zip" -Force
+
 Write-Host "Build terminé ! Les extensions sont disponibles dans dist/chrome et dist/firefox" -ForegroundColor Green
+Write-Host "Les archives ZIP sont disponibles dans dist/chrome.zip et dist/firefox.zip" -ForegroundColor Green
