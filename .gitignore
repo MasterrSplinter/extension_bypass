@@ -1,2 +1,5 @@
-﻿chrome/ChromeProfile/
+dist/
+*.zip
+chrome/ChromeProfile/
 firefox/webflix-adblocker.xpi
+*.log
