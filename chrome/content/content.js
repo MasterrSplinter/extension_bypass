@@ -222,8 +222,17 @@
     
 
     const target = e.target.closest('a[href]');
+    if (target) {
+        if (location.hostname.includes('senpai-stream') && target.closest('[wire\\:click]')) {
+            // Laissez passer
+        } else if (isAdUrl(target.href)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('[StreamBlocker] Clic pub bloqué vers :', target.href);
+            return;
+        }
+    }
     if (!target) return;
-    
     if (!e.isTrusted) {
         // Laissez passer l'auto-click sur senpai-stream (et webflix au cas où)
         if (location.hostname.includes('senpai-stream') || location.hostname.includes('webflix.lol')) {

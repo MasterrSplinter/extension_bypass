@@ -39,7 +39,7 @@ const AD_DOMAINS = [
   'galaksion.com', 'kadam.net', 'richpush.co', 'traficshop.com',
   'rtmark.net', 'adxpansion.com', 'jucyadsnew.com', 'ero-advertising.com',
   'realsrv.com', 'adspirit.de', 'clicksfly.com', 'ouo.io',
-  'shrinkme.io', 'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com'
+  'shrinkme.io', 'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com', 'northseize.com', 'pupupul.site'
 ];
 
 const STREAMING_SITES = [
