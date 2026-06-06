@@ -225,11 +225,15 @@
     if (!target) return;
     
     if (!e.isTrusted) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      console.log('[StreamBlocker] Clic programmatique bloqué vers :', target.href);
-      return;
-    }
+        // Laissez passer l'auto-click sur senpai-stream (et webflix au cas où)
+        if (location.hostname.includes('senpai-stream') || location.hostname.includes('webflix.lol')) {
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        console.log('[StreamBlocker] Clic programmatique bloqué vers :', target.href);
+        return;
+      }
 
     try {
       const rect = target.getBoundingClientRect();
