@@ -122,7 +122,10 @@
   ];
 
   function removeAdElements() {
-    if (!protectionEnabled) return;
+      if (!protectionEnabled) return;
+      // Ne pas exécuter la suppression générique d'éléments dans les lecteurs vidéo
+      // car cela risque de supprimer des contrôles légitimes (ex: .loading-overlay)
+      if (location.pathname.includes('player') || location.hostname.includes('player') || location.hostname.includes('fastflux') || location.hostname.includes('embed')) return;
     let removed = 0;
     AD_SELECTORS.forEach(selector => {
       try {
