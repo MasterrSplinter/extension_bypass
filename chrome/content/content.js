@@ -288,7 +288,7 @@
     if (e.button === 1) {
       const target = e.target.closest('a[href]');
       if (target) {
-        if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) {
+        if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) { return; }
         if (isAdUrl(target.href)) {
           e.preventDefault();
           e.stopImmediatePropagation();

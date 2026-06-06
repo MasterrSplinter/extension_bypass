@@ -238,6 +238,7 @@
         senpaiBypassed = true;
       } else if (senpaiFallbackAttempts > 0) {
         // Le bouton continuer a disparu et pas de play (Livewire update en cours)
+      }
     }
   }
 
