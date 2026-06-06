@@ -407,7 +407,8 @@
     'adnxs.com', 'sheety.co', 'moonadsq.to', 'miniroad.store',
     'stake.com', 'playafterdark.com', 'otieu.com', 'foreignabnormality.com',
     'adnium.com', 'plugrush.com', 'push.house', 'evadav.com',
-    'galaksion.com', 'kadam.net', 'richpush.co'
+    'galaksion.com', 'kadam.net', 'richpush.co', 'northseize.com',
+    'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com'
   ];
 
   const WHITELIST = [

@@ -3,10 +3,10 @@
  * Réécriture complète — architecture robuste
  *
  * FIXES:
- *  ✅ Toggle ON/OFF délègue au BG via TOGGLE_PROTECTION + fallback direct
+ *  ✅ Toggle ON/OFF délègue au SW via TOGGLE_PROTECTION + fallback direct
  *  ✅ Pas de setInterval — utilise chrome.storage.onChanged pour MAJ temps réel
  *  ✅ rulesCount dans la stat-card est mis à jour
- *  ✅ Lecture initiale de l'état via GET_STATS (inclut enabled depuis BG)
+ *  ✅ Lecture initiale de l'état via GET_STATS (inclut enabled depuis SW)
  *  ✅ Gestion robuste des erreurs (pas de crash silencieux)
  */
 
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ─── Chargement initial depuis le storage (source de vérité) ─────────────────
   async function loadState() {
     try {
-      // Essayer d'abord via le BG (inclut l'état en cache du BG)
+      // Essayer d'abord via le SW (inclut l'état en cache du SW)
       const stats = await sendMessageSafe({ type: 'GET_STATS' });
       if (stats) {
         applyStats(stats);
@@ -131,10 +131,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateToggleUI(isEnabled);
     showToast(isEnabled ? '✅ Protection activée' : '⏸️ Protection désactivée');
 
-    // Déléguer au BG
+    // Déléguer au SW
     try {
       const response = await sendMessageSafe({ type: 'TOGGLE_PROTECTION', enabled: isEnabled });
-      if (!response || !response.ok) throw new Error('BG response failed');
+      if (!response || !response.ok) throw new Error('SW response failed');
     } catch {
       // Fallback : écrire directement en storage + DNR
       await chrome.storage.local.set({ enabled: isEnabled });
@@ -324,10 +324,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         chrome.runtime.sendMessage(message, (response) => {
           clearTimeout(timer);
           if (chrome.runtime.lastError) {
-            // Ignorer l'erreur "receiving end does not exist" (BG dormant)
+            // Ignorer l'erreur "receiving end does not exist" (SW dormant)
             const err = chrome.runtime.lastError.message || '';
             if (err.includes('receiving end') || err.includes('Could not establish')) {
-              resolve(null); // BG dormant, fallback va gérer
+              resolve(null); // SW dormant, fallback va gérer
             } else {
               reject(new Error(err));
             }

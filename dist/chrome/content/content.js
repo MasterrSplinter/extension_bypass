@@ -239,11 +239,6 @@
       console.log('[StreamBlocker] Clic programmatique bloqué vers :', target.href);
       return;
     }
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        console.log('[StreamBlocker] Clic programmatique bloqué vers :', target.href);
-        return;
-      }
 
     try {
       const rect = target.getBoundingClientRect();
@@ -323,7 +318,8 @@
     'clkme.me', 'adspyglass.com', 'moonads.to', 'clickaine.com',
     'tsyndicate.com', 'creativecdn.com', 'smartadserver.com', 'adbull.me',
     'adnxs.com', 'sheety.co', 'moonadsq.to', 'miniroad.store',
-    'otieu.com', 'foreignabnormality.com', 'adnium.com', 'plugrush.com'
+    'otieu.com', 'foreignabnormality.com', 'adnium.com', 'plugrush.com',
+    'northseize.com', 'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com'
   ];
 
   const WHITELIST_DOMAINS = [

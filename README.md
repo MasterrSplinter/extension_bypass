@@ -20,9 +20,11 @@
 > [!TIP]
 > **Recommandation optimale** : Pour vous assurer de n'avoir **absolument aucune publicité** sur l'ensemble des lecteurs vidéo, nous vous recommandons fortement de coupler cette extension avec un bloqueur de publicités généraliste classique, tel que **uBlock Origin** ou **Adblock**.
 
-Ce dépôt contient l'extension Streaming AdBlocker Pro. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
-- Dossier `chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
-- Dossier `firefox` (pour Mozilla Firefox)
+Ce dépôt contient l'extension Streaming AdBlocker Pro et son code source unifié (`src/`). L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur et compilée dans le dossier `dist/` :
+- Dossier `dist/chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
+- Dossier `dist/firefox` (pour Mozilla Firefox)
+
+> **Information aux développeurs :** Pour générer l'extension après une modification du code, exécutez le script `build.ps1` à la racine du projet.
 
 ---
 
@@ -46,35 +48,17 @@ L'installation sur les navigateurs basés sur Chromium est très simple et l'ext
    - Brave : `brave://extensions/`
 2. Activez le **"Mode développeur"** (souvent un interrupteur en haut à droite ou à gauche).
 3. Cliquez sur le bouton **"Charger l'extension non empaquetée"** (Load unpacked).
-4. Sélectionnez le dossier `chrome` présent sur votre ordinateur.
+4. Sélectionnez le dossier `dist/chrome` présent sur votre ordinateur.
 5. L'extension est installée ! 
-
-> [!TIP]
-> **Astuce pour les développeurs** :
-> Vous disposez aussi d'un script dans le dossier `chrome` pour lancer une fenêtre Chrome isolée et dédiée avec l'extension (utile pour tester sans polluer votre navigateur principal).
-> Ouvrez un terminal dans ce dossier et exécutez :
-> ```powershell
-> powershell.exe -ExecutionPolicy Bypass -File .\launch_with_extension.ps1
-> ```
 
 ### 🦊 Mozilla Firefox
 Firefox possède des règles de sécurité très strictes qui interdisent l'installation permanente d'extensions non publiées sur leur boutique officielle, sur la version classique du navigateur.
 
-**La méthode la plus simple (Automatique) :**
-Nous avons créé un script qui s'occupe de **tout** à votre place. 
-1. Ouvrez un terminal (PowerShell) dans le dossier `firefox`.
-2. Tapez la commande suivante (elle permet de contourner la sécurité Windows qui bloque les scripts par défaut) :
-   ```powershell
-   powershell.exe -ExecutionPolicy Bypass -File .\build_and_install.ps1
-   ```
-3. Laissez le script travailler : il va télécharger et installer Firefox Nightly en arrière-plan (si vous ne l'avez pas), configurer les permissions secrètes automatiquement, puis lancer le navigateur avec l'extension prête à être validée.
-4. Cliquez simplement sur **"Ajouter"** quand Firefox s'ouvrira !
-
-**La méthode Manuelle (Si vous préférez le faire vous-même) :**
+**La méthode Manuelle :**
 1. Téléchargez et installez manuellement **[Firefox Developer Edition](https://www.mozilla.org/fr/firefox/developer/)** ou Nightly.
 2. Ouvrez ce navigateur, tapez `about:config` dans la barre d'adresse et acceptez l'avertissement.
 3. Cherchez la ligne `xpinstall.signatures.required` et double-cliquez dessus pour la passer à **`false`**.
-4. Compressez tout le *contenu* du dossier `firefox` dans un fichier `.zip`. 
+4. Compressez tout le *contenu* du dossier `dist/firefox` dans un fichier `.zip`. 
 5. Allez dans le menu des extensions (tapez `about:addons` dans la barre d'adresse), cliquez sur l'icône en forme d'**engrenage** (⚙️) en haut à droite, puis choisissez **"Installer un module depuis un fichier..."**.
 6. Sélectionnez votre fichier `.zip`. L'extension est désormais installée de manière **définitive** !
 
@@ -84,14 +68,14 @@ Nous avons créé un script qui s'occupe de **tout** à votre place.
 > 👉 *Solution :* Utilisez simplement un lecteur HD classique dans la liste, ou utilisez la version Chrome/Edge de l'extension si vous souhaitez absolument regarder en 4K.
 
 **Pour un test rapide (Temporaire, sur Firefox classique) :**
-- Tapez `about:debugging` > Cliquez sur "Ce Firefox" > **Charger un module complémentaire temporaire** > Sélectionnez le fichier `manifest.json` présent dans le dossier `firefox`. *(Attention : l'extension disparaîtra dès que vous fermerez le navigateur).*
+- Tapez `about:debugging` > Cliquez sur "Ce Firefox" > **Charger un module complémentaire temporaire** > Sélectionnez le fichier `manifest.json` présent dans le dossier `dist/firefox`. *(Attention : l'extension disparaîtra dès que vous fermerez le navigateur).*
 
 ---
 
 ## 📱 2. Installation sur Smartphone & Tablette (Mobile)
 
 > [!IMPORTANT]
-> **Avant de commencer :** Sur mobile, il est impossible de sélectionner un dossier non compressé. Vous devez d'abord compresser le contenu du dossier `chrome` (de préférence) en un fichier `.zip` et l'envoyer sur votre téléphone.
+> **Avant de commencer :** Sur mobile, il est impossible de sélectionner un dossier non compressé. Vous devez d'abord compresser le contenu du dossier `dist/chrome` (de préférence) en un fichier `.zip` et l'envoyer sur votre téléphone.
 
 ### 🍏 iOS (iPhone & iPad) — Via Orion Browser
 Apple bloque les extensions sur Safari mobile et Chrome iOS. Cependant, le navigateur **Orion Browser** (disponible gratuitement sur l'App Store) permet d'installer les extensions Chrome et Firefox sur iPhone !
