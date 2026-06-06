@@ -1,6 +1,9 @@
 # Webflix AdBlocker Pro
 
-Ce dépôt contient l'extension Webflix AdBlocker Pro, un bloqueur de publicités optimisé pour les sites de streaming. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
+> [!NOTE]
+> **Statut du projet** : Actuellement, cette extension est conçue et optimisée exclusivement pour le site **Webflix**. Cependant, elle a pour vocation d'évoluer à l'avenir afin de prendre en charge et bloquer les publicités sur d'autres plateformes de streaming !
+
+Ce dépôt contient l'extension Webflix AdBlocker Pro. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
 - Dossier `chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
 - Dossier `firefox` (pour Mozilla Firefox)
 
