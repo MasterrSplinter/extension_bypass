@@ -194,8 +194,9 @@
 
     // Approche 2: Fallback (Simulation de clic physique sécurisé)
     const btnContinuer = Array.from(document.querySelectorAll('button, .btn, [wire\\:click]')).find(b => 
-      (b.textContent || '').toUpperCase().includes('CONTINUER') || 
-      (b.innerText || '').toUpperCase().includes('CONTINUER')
+      ((b.textContent || '').toUpperCase().includes('CONTINUER') || 
+      (b.innerText || '').toUpperCase().includes('CONTINUER')) &&
+      window.getComputedStyle(b).display !== 'none'
     );
 
     if (btnContinuer) {
@@ -203,8 +204,18 @@
       try { _nativeClick.call(btnContinuer); } catch (e) { btnContinuer.click(); }
       senpaiFallbackAttempts++;
       
-      if (senpaiFallbackAttempts >= 6) {
+      if (senpaiFallbackAttempts > 30) {
+        console.log('[StreamBlocker/MAIN] Fallback Senpai : Timeout (boucle infinie évitée).');
         senpaiBypassed = true;
+      }
+    } else {
+      const playBtn = document.querySelector('#watch-preloader button[type="submit"]');
+      if (playBtn && window.getComputedStyle(playBtn).display !== 'none') {
+        console.log('[StreamBlocker/MAIN] Fallback Senpai : Bouton Play cliqué !');
+        try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+        senpaiBypassed = true;
+      } else if (senpaiFallbackAttempts > 0) {
+        // Le bouton continuer a disparu et pas de play (Livewire update en cours)
       }
     }
   }
