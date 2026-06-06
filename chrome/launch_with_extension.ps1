@@ -7,7 +7,7 @@ $persistentProfilePath = "$PSScriptRoot\ChromeProfile"
 
 # Lancement de Chrome avec ce répertoire dédié et l'extension chargée
 # On utilise une seule chaîne de caractères pour éviter les problèmes de guillemets de PowerShell
-$chromeArgs = "--user-data-dir=`"$persistentProfilePath`" --no-first-run --load-extension=`"$extensionPath`""
+$chromeArgs = "--remote-debugging-port=9222 --user-data-dir=`"$persistentProfilePath`" --no-first-run --load-extension=`"$extensionPath`""
 
 Start-Process "chrome.exe" -ArgumentList $chromeArgs
 

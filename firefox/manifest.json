@@ -63,7 +63,8 @@
       "js": ["content/main_world.js"],
       "run_at": "document_start",
       "world": "MAIN",
-      "all_frames": false
+      "all_frames": true,
+      "match_about_blank": true
     },
     {
       "comment": "ISOLATED WORLD — Sites streaming uniquement",
@@ -87,7 +88,8 @@
       "js": ["content/content.js"],
       "css": ["content/content.css"],
       "run_at": "document_start",
-      "all_frames": false
+      "all_frames": true,
+      "match_about_blank": true
     }
   ],
   "options_ui": {
