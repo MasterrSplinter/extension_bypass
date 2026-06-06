@@ -175,6 +175,14 @@
     if (!protectionEnabled) return;
     const target = e.target.closest('a[href]');
     if (!target) return;
+    
+    if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) {
+      e.preventDefault();
+      target.removeAttribute('target');
+      console.log('[StreamBlocker] Senpai Stream: Clic pub neutralisé mais autorisé pour Livewire');
+      return;
+    }
+
     if (isAdUrl(target.href)) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -186,9 +194,15 @@
     if (!protectionEnabled) return;
     if (e.button === 1) {
       const target = e.target.closest('a[href]');
-      if (target && isAdUrl(target.href)) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
+      if (target) {
+        if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) {
+          e.preventDefault();
+          return;
+        }
+        if (isAdUrl(target.href)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
       }
     }
   }, true);
