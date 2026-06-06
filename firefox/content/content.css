@@ -74,3 +74,8 @@ html:not(.webflix-blocker-active) body > *:not(script):not(style):not(link) {
   pointer-events: auto !important;
   filter: none !important;
 }
+
+/* Senpai Stream: Cacher la banniere d'abonnement */
+img[src*="/storage/banners/abonnements.png"] {
+  display: none !important;
+}
