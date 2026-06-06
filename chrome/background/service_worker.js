@@ -95,13 +95,18 @@ const PLAYER_SOURCE_PATTERNS = [
 let _enabledCache = true;        // Cache de l'état ON/OFF
 let _enabledCacheReady = false;  // Indique si le cache a été initialisé
 let lastUserClickTime = 0;       // Timestamp du dernier clic utilisateur (0 = jamais)
+let _customDomainsCache = [];    // Cache des domaines custom ajoutés
 
 // Charger l'état initial depuis le storage au démarrage du SW
 async function initCache() {
-  const data = await chrome.storage.local.get(['enabled']);
+  const data = await chrome.storage.local.get(['enabled', 'custom_domains']);
   _enabledCache = data.enabled !== false;
+  _customDomainsCache = data.custom_domains || [];
   _enabledCacheReady = true;
-  console.log(`[WebflixBlocker/SW] Cache initialisé: enabled=${_enabledCache}`);
+  console.log(`[WebflixBlocker/SW] Cache initialisé: enabled=${_enabledCache}, custom=${_customDomainsCache.length}`);
+  if (_customDomainsCache.length > 0) {
+    registerCustomDomains(_customDomainsCache);
+  }
 }
 initCache();
 
@@ -114,6 +119,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
       _enabledCache = newEnabled;
       console.log(`[WebflixBlocker/SW] Cache mis à jour via storage.onChanged: enabled=${_enabledCache}`);
     }
+  }
+  if (changes.custom_domains !== undefined) {
+    _customDomainsCache = changes.custom_domains.newValue || [];
   }
 });
 
@@ -148,7 +156,8 @@ function isPlayerSource(hostname) {
 
 function isStreamingSiteSource(hostname) {
   const h = normalizeHost(hostname);
-  return STREAMING_SITES.some(d => h === d || h.endsWith('.' + d));
+  return STREAMING_SITES.some(d => h === d || h.endsWith('.' + d)) || 
+         _customDomainsCache.some(d => h === d || h.endsWith('.' + d));
 }
 
 function getHostname(url) {
@@ -264,6 +273,44 @@ chrome.storage.local.get(['lastRulesUpdate']).then(data => {
     fetchAndUpdateRules();
   }
 });
+
+// ══════════════════════════════════════════════════════════════
+// GESTION DES DOMAINES CUSTOM (Dynamic Content Scripts)
+// ══════════════════════════════════════════════════════════════
+
+async function registerCustomDomains(domains) {
+  if (!chrome.scripting || !chrome.scripting.registerContentScripts) return;
+  try {
+    // Unregister old scripts
+    try { await chrome.scripting.unregisterContentScripts({ ids: ['custom_streaming_main', 'custom_streaming_isolated'] }); } catch {}
+    
+    if (domains.length > 0) {
+      const matches = domains.map(d => `*://*.${d}/*`);
+      const scripts = [
+        {
+          id: 'custom_streaming_main',
+          matches: matches,
+          js: ['content/main_world.js'],
+          runAt: 'document_start',
+          world: 'MAIN',
+          allFrames: false
+        },
+        {
+          id: 'custom_streaming_isolated',
+          matches: matches,
+          js: ['content/content.js'],
+          css: ['content/content.css'],
+          runAt: 'document_start',
+          allFrames: false
+        }
+      ];
+      await chrome.scripting.registerContentScripts(scripts);
+      console.log(`[WebflixBlocker/SW] ✅ Scripts injectés dynamiquement sur ${domains.length} domaines`);
+    }
+  } catch (err) {
+    console.error('[WebflixBlocker/SW] ❌ Erreur registerContentScripts:', err);
+  }
+}
 
 // ══════════════════════════════════════════════════════════════
 // LISTENER 1 : Nouvel onglet créé (window.open / target=_blank)
@@ -419,6 +466,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     fetchAndUpdateRules().then(async () => {
       const data = await chrome.storage.local.get(['rulesCount', 'lastRulesUpdate']);
       sendResponse({ ok: true, rulesCount: data.rulesCount || 40, lastRulesUpdate: data.lastRulesUpdate });
+    });
+    return true; // Async
+  }
+
+  // ── ADD_CUSTOM_DOMAIN : Ajouter dynamiquement un site ──────
+  if (type === 'ADD_CUSTOM_DOMAIN') {
+    const domain = message.domain;
+    chrome.storage.local.get(['custom_domains'], async (data) => {
+      const domains = data.custom_domains || [];
+      if (!domains.includes(domain)) {
+        domains.push(domain);
+        await chrome.storage.local.set({ custom_domains: domains });
+        _customDomainsCache = domains;
+        await registerCustomDomains(domains);
+      }
+      sendResponse({ ok: true, custom_domains: domains });
     });
     return true; // Async
   }

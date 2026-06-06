@@ -28,6 +28,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const historyList    = document.getElementById('historyList');
   const updateRulesBtn = document.getElementById('updateRulesBtn');
   const rulesInfo      = document.getElementById('rulesInfo');
+  const addDomainBtn   = document.getElementById('addDomainBtn');
+  const currentDomainLabel = document.getElementById('currentDomainLabel');
+
+  const STREAMING_SITES = [
+    'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
+    'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
+    'annuaire-telechargement.art', 'dpstreaming.to', 'cpasmieux.com',
+    'zone-telechargement.beauty', 'vostfree.tv', 'neko-sama.fr',
+    'anime-sama.fr', 'mavanime.org'
+  ];
 
   // ─── État local ──────────────────────────────────────────────────────────────
   let currentEnabled = true;
@@ -181,21 +191,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function checkActiveTab(enabled) {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const isWebflix = tab && tab.url && (
-        tab.url.includes('webflix.lol') ||
-        tab.url.includes('french-stream') ||
-        tab.url.includes('frenchstream')
-      );
+      if (!tab || !tab.url || tab.url.startsWith('chrome') || tab.url.startsWith('about')) return;
+      
+      let hostname = '';
+      try { hostname = new URL(tab.url).hostname.replace(/^www\./, ''); } catch {}
+      if (!hostname) return;
 
-      if (isWebflix) {
+      const data = await chrome.storage.local.get(['custom_domains']);
+      const customDomains = data.custom_domains || [];
+
+      const isProtected = STREAMING_SITES.some(d => hostname === d || hostname.endsWith('.' + d)) || 
+                          customDomains.some(d => hostname === d || hostname.endsWith('.' + d));
+
+      if (isProtected) {
         if (siteInfo)    siteInfo.style.display    = 'flex';
         if (notWebflix)  notWebflix.style.display  = 'none';
         if (siteStatusText) {
           siteStatusText.textContent = enabled ? 'Protection complète' : 'Protection désactivée';
         }
+        const siteLabel = document.getElementById('siteLabel');
+        if (siteLabel) siteLabel.textContent = hostname;
       } else {
         if (siteInfo)    siteInfo.style.display    = 'none';
         if (notWebflix)  notWebflix.style.display  = 'block';
+        if (currentDomainLabel) currentDomainLabel.textContent = hostname;
+        
+        if (addDomainBtn) {
+          addDomainBtn.onclick = async () => {
+            addDomainBtn.textContent = '⏳ Activation...';
+            addDomainBtn.disabled = true;
+            try {
+              await sendMessageSafe({ type: 'ADD_CUSTOM_DOMAIN', domain: hostname });
+              showToast('✅ Protection activée pour ce site !');
+              setTimeout(() => chrome.tabs.reload(tab.id), 1000);
+            } catch {
+              showToast('❌ Erreur lors de l\'activation');
+              addDomainBtn.textContent = '⚡ Activer sur ce site';
+              addDomainBtn.disabled = false;
+            }
+          };
+        }
       }
     } catch {}
   }
