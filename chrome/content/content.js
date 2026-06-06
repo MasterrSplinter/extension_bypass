@@ -164,20 +164,19 @@
     if (!protectionEnabled) return;
     if (!location.hostname.includes('senpai-stream')) return;
 
-    // Supprimer les liens Telegram
-    document.querySelectorAll('a[href*="t.me"], a[href*="telegram.me"]').forEach(el => {
+    // Supprimer les liens Telegram et VIP
+    document.querySelectorAll('a[href*="t.me"], a[href*="telegram.me"], a[href*="vip"], a[href*="premium"], a[href*="abonnement"]').forEach(el => {
       el.remove();
-      console.log('[StreamBlocker] Lien Telegram supprimé');
+      console.log('[StreamBlocker] Lien Telegram/VIP supprimé');
     });
 
-    // Supprimer la bannière d'abonnement
-    document.querySelectorAll('div, a, section').forEach(el => {
-      const text = (el.innerText || el.textContent || '').toLowerCase();
-      if (text.includes('abonnement disponible') || text.includes('cryptomonnaies') || text.includes('t\'abonner')) {
-        if (el.children.length < 15 && el.textContent.length < 300) {
-          el.remove();
-          console.log('[StreamBlocker] Bannière abonnement supprimée');
-        }
+    // Supprimer la bannière d'abonnement (détection agressive sans espaces)
+    document.querySelectorAll('div, a, section, p, span').forEach(el => {
+      if (el.children.length > 15) return; // Sécurité pour ne pas supprimer la page entière
+      const text = (el.innerText || el.textContent || '').toLowerCase().replace(/\s+/g, '');
+      if (text.includes('abonnementdisponible') || text.includes('cryptomonnaies') || text.includes("t'abonner")) {
+        el.remove();
+        console.log('[StreamBlocker] Bannière abonnement supprimée (détection texte agressive)');
       }
     });
   }
