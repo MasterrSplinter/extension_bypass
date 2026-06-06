@@ -38,20 +38,7 @@
     {
       "comment": "MAIN WORLD — Sites streaming uniquement (pas les lecteurs Cloudflare)",
       "matches": [
-        "*://*.webflix.lol/*",
-        "*://*.french-stream.ac/*",
-        "*://*.frenchstream.wtf/*",
-        "*://*.papystreaming.tv/*",
-        "*://*.voiranime.com/*",
-        "*://*.filmcomplet.link/*",
-        "*://*.streamcomplet.app/*",
-        "*://*.wiflix.st/*",
-        "*://*.annuaire-telechargement.art/*",
-        "*://*.dpstreaming.to/*",
-        "*://*.dpstreaming.ink/*",
-        "*://*.cpasmieux.com/*",
-        "*://*.cpasmieux.pro/*",
-        "*://*.zone-telechargement.beauty/*"
+        "<all_urls>"
       ],
       "js": ["content/main_world.js"],
       "run_at": "document_start",
@@ -61,20 +48,7 @@
     {
       "comment": "ISOLATED WORLD — Sites streaming uniquement",
       "matches": [
-        "*://*.webflix.lol/*",
-        "*://*.french-stream.ac/*",
-        "*://*.frenchstream.wtf/*",
-        "*://*.papystreaming.tv/*",
-        "*://*.voiranime.com/*",
-        "*://*.filmcomplet.link/*",
-        "*://*.streamcomplet.app/*",
-        "*://*.wiflix.st/*",
-        "*://*.annuaire-telechargement.art/*",
-        "*://*.dpstreaming.to/*",
-        "*://*.dpstreaming.ink/*",
-        "*://*.cpasmieux.com/*",
-        "*://*.cpasmieux.pro/*",
-        "*://*.zone-telechargement.beauty/*"
+        "<all_urls>"
       ],
       "js": ["content/content.js"],
       "css": ["content/content.css"],

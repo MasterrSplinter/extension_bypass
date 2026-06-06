@@ -272,13 +272,10 @@
   ];
 
   const WHITELIST = [
-    'webflix.lol', 'wavewatch.top', 'player4k.com',
-    'viperstreamz.com', 'viperstream.xyz', 'viperstre.am', 'viper4k.com',
-    'streamvid.net', 'embedme.top', 'filemoon.sx', 'filemoon.in', 'filemoon.com',
-    'embtaku.com', 'youtube.com', 'vimeo.com', 'dailymotion.com',
+    'google.com', 'accounts.google.com', 'facebook.com', 'paypal.com',
+    'github.com', 'youtube.com', 'vimeo.com', 'dailymotion.com',
     'googleapis.com', 'gstatic.com', 'cloudflare.com', 'jsdelivr.net',
-    'jwplatform.com', 'jwpcdn.com', 'uqload.com', 'uqload.co',
-    'mixdrop.co', 'doodstream.com', 'streamtape.com', 'voe.sx'
+    'stripe.com', 'apple.com', 'microsoft.com'
   ];
 
   function isAdUrl(url) {
