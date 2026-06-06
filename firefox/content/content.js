@@ -215,6 +215,17 @@
   // ══════════════════════════════════════════════════════════════════
   document.addEventListener('click', (e) => {
     if (!protectionEnabled) return;
+
+    if (location.hostname.includes('webflix.lol')) {
+      const btn = e.target.closest('button');
+      if (btn && btn.querySelector('svg.lucide-play')) {
+        console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+    }
+
     const target = e.target.closest('a[href]');
     if (!target) return;
     
@@ -223,16 +234,6 @@
       target.removeAttribute('target');
       console.log('[StreamBlocker] Senpai Stream: Clic pub neutralisé mais autorisé pour Livewire');
       return;
-    }
-
-    if (location.hostname.includes('webflix.lol')) {
-      const btn = target.closest('button');
-      if (btn && btn.querySelector('svg.lucide-play')) {
-        console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
     }
 
     if (isAdUrl(target.href)) {
@@ -244,22 +245,21 @@
 
   document.addEventListener('mousedown', (e) => {
     if (!protectionEnabled) return;
+
+    if (location.hostname.includes('webflix.lol')) {
+      const btn = e.target.closest('button');
+      if (btn && btn.querySelector('svg.lucide-play')) {
+        console.log('[StreamBlocker] Webflix : Mousedown manuel sur Play neutralisé');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+    }
+
     if (e.button === 1) {
       const target = e.target.closest('a[href]');
       if (target) {
         if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) {
-          e.preventDefault();
-          return;
-        }
-        if (location.hostname.includes('webflix.lol')) {
-          const btn = target.closest('button');
-          if (btn && btn.querySelector('svg.lucide-play')) {
-            console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return;
-          }
-        }
         if (isAdUrl(target.href)) {
           e.preventDefault();
           e.stopImmediatePropagation();
