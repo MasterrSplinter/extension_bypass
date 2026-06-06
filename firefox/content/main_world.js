@@ -178,15 +178,18 @@
         if (watchComponent && typeof watchComponent.incrementSteps === 'function') {
           console.log('[StreamBlocker/MAIN] Livewire watch-component trouvé. Injection du bypass...');
           for (let i = 0; i < 5; i++) {
-            await watchComponent.incrementSteps();
-            await new Promise(r => setTimeout(r, 100));
+            try { await watchComponent.incrementSteps(); } catch(e){}
+            await new Promise(r => setTimeout(r, 800)); // Ralentir pour éviter la 405
           }
           console.log('[StreamBlocker/MAIN] 5 étapes validées via API ! Lancement de la vidéo...');
           
           setTimeout(() => {
             const playBtn = document.querySelector('#watch-preloader button[type="submit"]');
             if (playBtn) {
-              try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+              console.log('[StreamBlocker/MAIN] Clic sur Play dans 1.5s...');
+              setTimeout(() => {
+                try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+              }, 1500);
             }
           }, 500);
 
@@ -202,7 +205,10 @@
     const btnContinuer = Array.from(document.querySelectorAll('button, .btn, [wire\\:click]')).find(b => 
       ((b.textContent || '').toUpperCase().includes('CONTINUER') || 
       (b.innerText || '').toUpperCase().includes('CONTINUER')) &&
-      window.getComputedStyle(b).display !== 'none'
+      window.getComputedStyle(b).display !== 'none' &&
+      !b.disabled && 
+      !b.hasAttribute('disabled') &&
+      !b.classList.contains('disabled')
     );
 
     if (btnContinuer) {
@@ -224,9 +230,11 @@
       }
     } else {
       const playBtn = document.querySelector('#watch-preloader button[type="submit"]');
-      if (playBtn && window.getComputedStyle(playBtn).display !== 'none') {
+      if (playBtn && window.getComputedStyle(playBtn).display !== 'none' && !playBtn.disabled) {
         console.log('[StreamBlocker/MAIN] Fallback Senpai : Bouton Play cliqué !');
-        try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+        setTimeout(() => {
+          try { _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+        }, 1500); // Attendre un peu avant de cliquer Play pour éviter 405
         senpaiBypassed = true;
       } else if (senpaiFallbackAttempts > 0) {
         // Le bouton continuer a disparu et pas de play (Livewire update en cours)
