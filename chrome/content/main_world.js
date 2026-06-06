@@ -159,11 +159,17 @@
   // ══════════════════════════════════════════════════════════════════
   let senpaiBypassed = false;
   let senpaiFallbackAttempts = 0;
+  let senpaiWaitAttempts = 0;
 
   async function bypassSenpaiStream() {
     if (!window.__WFB_ENABLED) return;
     if (senpaiBypassed) return;
     if (!location.hostname.includes('senpai-stream')) return;
+
+    if (typeof window.Livewire === 'undefined') {
+      senpaiWaitAttempts++;
+      if (senpaiWaitAttempts < 10) return; // Attendre jusqu'à 5s l'initialisation de Livewire
+    }
 
     // Approche 1: API Livewire directe
     if (typeof window.Livewire !== 'undefined') {
@@ -201,6 +207,14 @@
 
     if (btnContinuer) {
       console.log('[StreamBlocker/MAIN] Fallback Senpai : Bouton Continuer trouvé. Auto-clic...');
+      
+      // Sécurité anti-405: empêcher la soumission native du formulaire
+      const form = btnContinuer.closest('form');
+      if (form && !form.dataset.wfbSecured) {
+        form.addEventListener('submit', (e) => e.preventDefault(), false);
+        form.dataset.wfbSecured = 'true';
+      }
+
       try { _nativeClick.call(btnContinuer); } catch (e) { btnContinuer.click(); }
       senpaiFallbackAttempts++;
       
