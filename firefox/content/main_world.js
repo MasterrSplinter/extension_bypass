@@ -250,11 +250,11 @@
     if (webflixBypassed) return;
     if (!location.hostname.includes('webflix.lol')) return;
 
-    // Cherche l'encadré de texte indiquant qu'il faut cliquer sur lecture
-    const hasInstructions = Array.from(document.querySelectorAll('p')).some(p => p.textContent.includes('sur Lecture'));
-    if (!hasInstructions) return;
-
-    const playBtn = document.querySelector('button.group.relative.flex');
+    // Cherche le bouton avec l'icône Play spécifique à Webflix
+    const playIcon = document.querySelector('svg.lucide-play');
+    if (!playIcon) return;
+    
+    const playBtn = playIcon.closest('button');
     if (playBtn && !playBtn.dataset.wfClicked) {
       playBtn.dataset.wfClicked = 'true';
       console.log('[StreamBlocker/MAIN] Webflix : Bouton Play détecté ! Lancement du bypass automatique...');
@@ -422,6 +422,7 @@
 
   function isWhitelisted(url) {
     if (!url || typeof url !== 'string') return true;
+    if (url.includes('smartlink')) return false; // Bloquer les popups internes de Webflix
     if (url.startsWith('#') || url.startsWith('javascript:') || url.startsWith('/') || url.startsWith('blob:')) return true;
     try {
       const u = new URL(url, window.location.href);
