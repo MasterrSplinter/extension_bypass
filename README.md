@@ -22,7 +22,13 @@ L'installation sur les navigateurs basés sur Chromium est très simple et l'ext
 4. Sélectionnez le dossier `chrome` présent sur votre ordinateur.
 5. L'extension est installée ! 
 
-*(Astuce : Vous disposez aussi d'un script dans le dossier `chrome` pour lancer une fenêtre Chrome isolée et dédiée avec l'extension. Ouvrez un terminal dans ce dossier et tapez : `powershell.exe -ExecutionPolicy Bypass -File .\launch_with_extension.ps1`)*
+> [!TIP]
+> **Astuce pour les développeurs** :
+> Vous disposez aussi d'un script dans le dossier `chrome` pour lancer une fenêtre Chrome isolée et dédiée avec l'extension (utile pour tester sans polluer votre navigateur principal).
+> Ouvrez un terminal dans ce dossier et exécutez :
+> ```powershell
+> powershell.exe -ExecutionPolicy Bypass -File .\launch_with_extension.ps1
+> ```
 
 ### 🦊 Mozilla Firefox
 Firefox possède des règles de sécurité très strictes qui interdisent l'installation permanente d'extensions non publiées sur leur boutique officielle, sur la version classique du navigateur.
@@ -45,9 +51,10 @@ Nous avons créé un script qui s'occupe de **tout** à votre place.
 5. Allez dans le menu des extensions (tapez `about:addons` dans la barre d'adresse), cliquez sur l'icône en forme d'**engrenage** (⚙️) en haut à droite, puis choisissez **"Installer un module depuis un fichier..."**.
 6. Sélectionnez votre fichier `.zip`. L'extension est désormais installée de manière **définitive** !
 
-**⚠️ Limitation Importante sur Firefox (Vidéos en 4K)**
-Firefox ne supporte pas nativement le format vidéo H.265 (HEVC) pour des raisons de licences payantes. Par conséquent, **le "Lecteur 4K" de Webflix affichera une erreur de lecture (`METADATA_ERR`) sur Firefox**. 
-👉 *Solution :* Utilisez simplement un lecteur HD classique dans la liste, ou utilisez la version Chrome/Edge de l'extension si vous souhaitez absolument regarder en 4K.
+> [!WARNING]
+> **Limitation Importante sur Firefox (Vidéos en 4K)**
+> Firefox ne supporte pas nativement le format vidéo H.265 (HEVC) pour des raisons de licences payantes. Par conséquent, **le "Lecteur 4K" de Webflix affichera une erreur de lecture (`METADATA_ERR`) sur Firefox**. 
+> 👉 *Solution :* Utilisez simplement un lecteur HD classique dans la liste, ou utilisez la version Chrome/Edge de l'extension si vous souhaitez absolument regarder en 4K.
 
 **Pour un test rapide (Temporaire, sur Firefox classique) :**
 - Tapez `about:debugging` > Cliquez sur "Ce Firefox" > **Charger un module complémentaire temporaire** > Sélectionnez le fichier `manifest.json` présent dans le dossier `firefox`. *(Attention : l'extension disparaîtra dès que vous fermerez le navigateur).*
@@ -56,7 +63,8 @@ Firefox ne supporte pas nativement le format vidéo H.265 (HEVC) pour des raison
 
 ## 📱 2. Installation sur Smartphone & Tablette (Mobile)
 
-*Avant de commencer : Sur mobile, il est impossible de sélectionner un dossier non compressé. Vous devez d'abord compresser le contenu du dossier `chrome` (de préférence) en un fichier `.zip` et l'envoyer sur votre téléphone.*
+> [!IMPORTANT]
+> **Avant de commencer :** Sur mobile, il est impossible de sélectionner un dossier non compressé. Vous devez d'abord compresser le contenu du dossier `chrome` (de préférence) en un fichier `.zip` et l'envoyer sur votre téléphone.
 
 ### 🍏 iOS (iPhone & iPad) — Via Orion Browser
 Apple bloque les extensions sur Safari mobile et Chrome iOS. Cependant, le navigateur **Orion Browser** (disponible gratuitement sur l'App Store) permet d'installer les extensions Chrome et Firefox sur iPhone !
@@ -79,4 +87,5 @@ Sur Android, Google Chrome mobile ne supporte pas les extensions. Le meilleur na
 6. Cherchez et sélectionnez votre fichier `.zip` dans la mémoire de votre téléphone.
 7. L'extension est installée de manière permanente et protégera votre navigation !
 
-*(Note pour Android : Lemur Browser et Yandex Browser permettent également l'installation d'extensions Chrome de la même manière).*
+> [!NOTE]
+> *(Pour Android : Lemur Browser et Yandex Browser permettent également l'installation d'extensions Chrome de la même manière).*
