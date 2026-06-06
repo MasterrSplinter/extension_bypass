@@ -17,6 +17,9 @@
 > [!NOTE]
 > **Statut du projet** : Actuellement, cette extension est conçue et optimisée exclusivement pour le site **Webflix**. Cependant, elle a pour vocation d'évoluer à l'avenir afin de prendre en charge et bloquer les publicités sur d'autres plateformes de streaming !
 
+> [!TIP]
+> **Recommandation optimale** : Pour vous assurer de n'avoir **absolument aucune publicité** sur l'ensemble des lecteurs vidéo, nous vous recommandons fortement de coupler cette extension avec un bloqueur de publicités généraliste classique, tel que **uBlock Origin** ou **Adblock**.
+
 Ce dépôt contient l'extension Webflix AdBlocker Pro. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
 - Dossier `chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
 - Dossier `firefox` (pour Mozilla Firefox)
