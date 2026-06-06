@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="chrome/icons/icon128.png" alt="Streaming AdBlocker Pro Logo" width="128">
+  <img src="src/icons/icon128.png" alt="Streaming AdBlocker Pro Logo" width="128">
 </p>
 
 <h1 align="center">Streaming AdBlocker Pro</h1>
