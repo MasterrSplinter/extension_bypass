@@ -1,4 +1,18 @@
-# Webflix AdBlocker Pro
+<p align="center">
+  <img src="chrome/icons/icon128.png" alt="Webflix AdBlocker Pro Logo" width="128">
+</p>
+
+<h1 align="center">Webflix AdBlocker Pro</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white" alt="Chrome">
+  <img src="https://img.shields.io/badge/Mozilla%20Firefox-FF7139?style=for-the-badge&logo=MozillaFirefox&logoColor=white" alt="Firefox">
+  <img src="https://img.shields.io/badge/Microsoft%20Edge-0078D7?style=for-the-badge&logo=MicrosoftEdge&logoColor=white" alt="Edge">
+  <img src="https://img.shields.io/badge/Brave-FF1B2D?style=for-the-badge&logo=Brave&logoColor=white" alt="Brave">
+  <br>
+  <img src="https://img.shields.io/badge/License-MIT-success?style=flat-square" alt="License: MIT">
+  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square" alt="Version: 1.0.0">
+</p>
 
 > [!NOTE]
 > **Statut du projet** : Actuellement, cette extension est conçue et optimisée exclusivement pour le site **Webflix**. Cependant, elle a pour vocation d'évoluer à l'avenir afin de prendre en charge et bloquer les publicités sur d'autres plateformes de streaming !
@@ -7,7 +21,14 @@ Ce dépôt contient l'extension Webflix AdBlocker Pro. L'extension est décliné
 - Dossier `chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
 - Dossier `firefox` (pour Mozilla Firefox)
 
-Voici le guide complet pour installer et utiliser l'extension de manière **permanente** sur tous vos appareils.
+---
+
+## ✨ Fonctionnalités
+
+- 🚫 **Blocage natif** : Intercepte et bloque les scripts publicitaires intrusifs avant même qu'ils ne se chargent.
+- ⚡ **Ultra-léger** : Conçu pour ne pas ralentir votre navigateur, optimisant ainsi le temps de chargement de vos vidéos.
+- 🕵️ **Contournement intelligent** : Évite la détection par les systèmes anti-adblock basiques.
+- 📱 **Multi-plateformes** : Fonctionne sur ordinateur (Windows, Mac, Linux) ainsi que sur mobile (via des navigateurs compatibles comme Kiwi ou Orion).
 
 ---
 
@@ -92,3 +113,21 @@ Sur Android, Google Chrome mobile ne supporte pas les extensions. Le meilleur na
 
 > [!NOTE]
 > *(Pour Android : Lemur Browser et Yandex Browser permettent également l'installation d'extensions Chrome de la même manière).*
+
+---
+
+## 🤝 Contribuer
+
+Les contributions sont grandement appréciées ! Puisque l'objectif de ce projet est de s'étendre à d'autres plateformes de streaming, votre aide est la bienvenue.
+Pour contribuer :
+1. "Forkez" le projet.
+2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/NouvellePlateforme`).
+3. Commitez vos changements (`git commit -m 'Ajout du support pour [Plateforme]'`).
+4. Poussez vers la branche (`git push origin feature/NouvellePlateforme`).
+5. Ouvrez une "Pull Request".
+
+---
+
+## ⚖️ Licence
+
+Ce projet est distribué sous la licence MIT.
