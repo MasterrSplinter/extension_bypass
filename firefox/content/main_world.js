@@ -291,7 +291,12 @@
         
         if (isClickable || (isOverlay && isTransparent && isHighZIndex)) {
           // Ne pas supprimer le conteneur du lecteur vido lui-mme
-          if (!el.querySelector('video') && !el.classList.contains('jwplayer')) {
+          // Ne pas supprimer le conteneur du lecteur vidéo lui-même ni le vrai bouton play
+            const elId = (el.id || '').toLowerCase();
+            const elClass = (el.className || '').toString().toLowerCase();
+            const isPlayButton = elId.includes('play') || elClass.includes('play');
+            
+            if (!el.querySelector('video') && !el.classList.contains('jwplayer') && !isPlayButton) {
             console.log('[StreamBlocker/MAIN] Overlay gant/transparent publicitaire supprim', el);
             el.remove();
           }
