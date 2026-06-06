@@ -57,7 +57,8 @@
         "*://*.dpstreaming.ink/*",
         "*://*.cpasmieux.com/*",
         "*://*.cpasmieux.pro/*",
-        "*://*.zone-telechargement.beauty/*"
+        "*://*.zone-telechargement.beauty/*",
+        "*://*.senpai-stream.quest/*"
       ],
       "js": ["content/main_world.js"],
       "run_at": "document_start",
@@ -80,7 +81,8 @@
         "*://*.dpstreaming.ink/*",
         "*://*.cpasmieux.com/*",
         "*://*.cpasmieux.pro/*",
-        "*://*.zone-telechargement.beauty/*"
+        "*://*.zone-telechargement.beauty/*",
+        "*://*.senpai-stream.quest/*"
       ],
       "js": ["content/content.js"],
       "css": ["content/content.css"],

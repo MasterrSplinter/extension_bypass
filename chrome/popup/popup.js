@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const currentDomainLabel = document.getElementById('currentDomainLabel');
 
   const STREAMING_SITES = [
-    'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
+    'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
     'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
     'annuaire-telechargement.art', 'dpstreaming.to', 'cpasmieux.com',
     'zone-telechargement.beauty', 'vostfree.tv', 'neko-sama.fr',

@@ -155,6 +155,40 @@
   }
 
   // ══════════════════════════════════════════════════════════════════
+  // SECTION E2 : Bypass Senpai Stream (Livewire)
+  // ══════════════════════════════════════════════════════════════════
+  let senpaiBypassed = false;
+
+  async function bypassSenpaiStream() {
+    if (!window.__WFB_ENABLED) return;
+    if (senpaiBypassed) return;
+    if (!location.hostname.includes('senpai-stream')) return;
+
+    if (typeof window.Livewire === 'undefined') return;
+
+    try {
+      const watchComponent = window.Livewire.all().find(c => c.name === 'watch-component');
+      if (watchComponent) {
+        console.log('[StreamBlocker/MAIN] Livewire watch-component trouvé. Injection du bypass...');
+        for (let i = 0; i < 5; i++) {
+          await watchComponent.incrementSteps();
+          await new Promise(r => setTimeout(r, 100));
+        }
+        console.log('[StreamBlocker/MAIN] 5 étapes validées ! Lancement de la vidéo...');
+        
+        setTimeout(() => {
+          const playBtn = document.querySelector('#watch-preloader button[type="submit"]');
+          if (playBtn) playBtn.click();
+        }, 500);
+
+        senpaiBypassed = true;
+      }
+    } catch (e) {
+      console.warn('[StreamBlocker/MAIN] Erreur lors du bypass Senpai Stream:', e);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
   // SECTION F : Masquer les overlays pub par CSS/DOM
   // ══════════════════════════════════════════════════════════════════
   function hideAdOverlays() {
@@ -215,6 +249,9 @@
     if (!wwembedBypassed && location.hostname.includes('wavewatch')) {
       bypassWWEMBED();
     }
+    if (!senpaiBypassed && location.hostname.includes('senpai-stream')) {
+      bypassSenpaiStream();
+    }
     bypassGenericStepOverlay();
     hideAdOverlays();
   });
@@ -241,6 +278,7 @@
       const retryInterval = setInterval(() => {
         if (!window.__WFB_ENABLED) { clearInterval(retryInterval); return; }
         bypassGenericStepOverlay();
+        if (location.hostname.includes('senpai-stream')) bypassSenpaiStream();
         hideAdOverlays();
         attempts++;
         if (attempts > 20) clearInterval(retryInterval);

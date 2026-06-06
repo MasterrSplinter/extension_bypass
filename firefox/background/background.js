@@ -43,7 +43,7 @@ const AD_DOMAINS = [
 ];
 
 const STREAMING_SITES = [
-  'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
+  'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
   'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
   'annuaire-telechargement.art', 'dpstreaming.to', 'cpasmieux.com',
   'zone-telechargement.beauty', 'vostfree.tv', 'neko-sama.fr',
@@ -52,7 +52,7 @@ const STREAMING_SITES = [
 
 const WHITELIST_DOMAINS = [
   // Sites de streaming
-  'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
+  'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
   'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
   // Lecteurs vidéo
   'wavewatch.top', 'apis.wavewatch.top', 'bysebuho.com', 'nzn3.org',
