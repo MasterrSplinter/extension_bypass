@@ -216,15 +216,7 @@
   document.addEventListener('click', (e) => {
     if (!protectionEnabled) return;
 
-    if (location.hostname.includes('webflix.lol')) {
-      const btn = e.target.closest('button');
-      if (btn && btn.querySelector('svg.lucide-play')) {
-        console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
-    }
+    
 
     const target = e.target.closest('a[href]');
     if (!target) return;
@@ -275,15 +267,7 @@
   document.addEventListener('mousedown', (e) => {
     if (!protectionEnabled) return;
 
-    if (location.hostname.includes('webflix.lol')) {
-      const btn = e.target.closest('button');
-      if (btn && btn.querySelector('svg.lucide-play')) {
-        console.log('[StreamBlocker] Webflix : Mousedown manuel sur Play neutralisé');
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
-    }
+    
 
     if (e.button === 1) {
       const target = e.target.closest('a[href]');
