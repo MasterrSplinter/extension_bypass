@@ -35,7 +35,7 @@
 
   window.addEventListener('__wfb_set_enabled__', (e) => {
     window.__WFB_ENABLED = e.detail === true || e.detail === 'true';
-    console.log('[WebflixBlocker/MAIN] État protection mis à jour :', window.__WFB_ENABLED);
+    console.log('[StreamBlocker/MAIN] État protection mis à jour :', window.__WFB_ENABLED);
   }, { capture: true });
 
   // ══════════════════════════════════════════════════════════════════
@@ -48,7 +48,7 @@
       return _nativeOpen.call(window, url, target, features);
     }
 
-    console.log('[WebflixBlocker/MAIN] window.open intercepté :', url);
+    console.log('[StreamBlocker/MAIN] window.open intercepté :', url);
 
     const fakeWin = {
       closed:    false,
@@ -85,7 +85,7 @@
       const href   = this.getAttribute('href') || (typeof this.href === 'string' ? this.href : '');
       const target = this.getAttribute('target') || this.target || '';
       if (target === '_blank' && href && !isWhitelisted(href)) {
-        console.log('[WebflixBlocker/MAIN] .click() sur <a _blank> bloqué :', href);
+        console.log('[StreamBlocker/MAIN] .click() sur <a _blank> bloqué :', href);
         return;
       }
     }
@@ -106,14 +106,14 @@
 
     const btn1 = document.querySelector('.bt.bp:not(.hi)');
     if (btn1 && !btn1.classList.contains('hi')) {
-      console.log('[WebflixBlocker/MAIN] WWEMBED : auto-clic ÉTAPE 1/2');
+      console.log('[StreamBlocker/MAIN] WWEMBED : auto-clic ÉTAPE 1/2');
       _nativeClick.call(btn1);
     }
 
     setTimeout(() => {
       const btn2Now = document.querySelector('.bt.bp2:not(.hi)');
       if (btn2Now) {
-        console.log('[WebflixBlocker/MAIN] WWEMBED : auto-clic ÉTAPE 2/2');
+        console.log('[StreamBlocker/MAIN] WWEMBED : auto-clic ÉTAPE 2/2');
         _nativeClick.call(btn2Now);
       }
       setTimeout(() => {
@@ -121,7 +121,7 @@
         if (modalNow) {
           modalNow.classList.remove('sh');
           modalNow.style.display = 'none';
-          console.log('[WebflixBlocker/MAIN] WWEMBED : overlay masqué');
+          console.log('[StreamBlocker/MAIN] WWEMBED : overlay masqué');
         }
         wwembedBypassed = true;
       }, 400);
@@ -146,7 +146,7 @@
         (text.includes('PUB') && (text.includes('1') || text.includes('2')))
       );
       if (isStepBtn) {
-        console.log('[WebflixBlocker/MAIN] Bouton étape détecté :', text);
+        console.log('[StreamBlocker/MAIN] Bouton étape détecté :', text);
         found = true;
         try { _nativeClick.call(btn); } catch (e) {}
       }
@@ -176,7 +176,7 @@
           if (rect.width > 200 && rect.height > 100) {
             el.style.setProperty('display', 'none', 'important');
             el.classList.remove('sh', 'show', 'active', 'visible');
-            console.log('[WebflixBlocker/MAIN] Overlay masqué :', sel);
+            console.log('[StreamBlocker/MAIN] Overlay masqué :', sel);
           }
         });
       } catch (e) {}
@@ -192,7 +192,7 @@
 
     window.location.assign = function (url) {
       if (window.__WFB_ENABLED && isAdUrl(url)) {
-        console.log('[WebflixBlocker/MAIN] location.assign bloqué :', url);
+        console.log('[StreamBlocker/MAIN] location.assign bloqué :', url);
         return;
       }
       return _origAssign(url);
@@ -200,7 +200,7 @@
 
     window.location.replace = function (url) {
       if (window.__WFB_ENABLED && isAdUrl(url)) {
-        console.log('[WebflixBlocker/MAIN] location.replace bloqué :', url);
+        console.log('[StreamBlocker/MAIN] location.replace bloqué :', url);
         return;
       }
       return _origReplace(url);
@@ -306,5 +306,5 @@
     } catch {}
   }, { capture: true, passive: true });
 
-  console.log('[WebflixBlocker/MAIN] ✅ Protection MAIN WORLD active sur', location.hostname);
+  console.log('[StreamBlocker/MAIN] ✅ Protection MAIN WORLD active sur', location.hostname);
 })();

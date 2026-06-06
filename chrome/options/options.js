@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       domainList.innerHTML = `
         <div class="empty-state">
           Aucun site personnalisé ajouté.<br><br>
-          <em>Note: Les sites de streaming principaux (webflix.lol, etc.) sont gérés automatiquement en arrière-plan et n'apparaissent pas ici.</em>
+          <em>Note: Les sites de streaming principaux intégrés de base sont gérés automatiquement en arrière-plan et n'apparaissent pas ici.</em>
         </div>`;
       return;
     }

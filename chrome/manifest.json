@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Webflix AdBlocker Pro",
+  "name": "Streaming AdBlocker Pro",
   "version": "1.6.0",
-  "description": "Bloque les publicités, popups et redirections sur les sites de streaming — Compatible Manifest V3.",
+  "description": "Bloqueur de publicités et popups spécialisé pour les sites de streaming. Léger, rapide et invisible.",
   "icons": {
     "16":  "icons/icon16.png",
     "48":  "icons/icon48.png",
@@ -93,7 +93,7 @@
 
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "Webflix AdBlocker Pro",
+    "default_title": "Streaming AdBlocker Pro",
     "default_icon": {
       "16":  "icons/icon16.png",
       "48":  "icons/icon48.png",

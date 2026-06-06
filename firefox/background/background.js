@@ -103,7 +103,7 @@ async function initCache() {
   _enabledCache = data.enabled !== false;
   _customDomainsCache = data.custom_domains || [];
   _enabledCacheReady = true;
-  console.log(`[WebflixBlocker/BG] Cache initialisé: enabled=${_enabledCache}, custom=${_customDomainsCache.length}`);
+  console.log(`[StreamBlocker/BG] Cache initialisé: enabled=${_enabledCache}, custom=${_customDomainsCache.length}`);
   if (_customDomainsCache.length > 0) {
     registerCustomDomains(_customDomainsCache);
   }
@@ -117,7 +117,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
     const newEnabled = changes.enabled.newValue !== false;
     if (_enabledCache !== newEnabled) {
       _enabledCache = newEnabled;
-      console.log(`[WebflixBlocker/BG] Cache mis à jour via storage.onChanged: enabled=${_enabledCache}`);
+      console.log(`[StreamBlocker/BG] Cache mis à jour via storage.onChanged: enabled=${_enabledCache}`);
     }
   }
   if (changes.custom_domains !== undefined) {
@@ -244,7 +244,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 // ══════════════════════════════════════════════════════════════
 
 async function fetchAndUpdateRules() {
-  console.log('[WebflixBlocker/BG] 🔄 Tentative MàJ règles distantes...');
+  console.log('[StreamBlocker/BG] 🔄 Tentative MàJ règles distantes...');
   try {
     const response = await fetch(REMOTE_RULES_URL, { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -260,9 +260,9 @@ async function fetchAndUpdateRules() {
       addRules: numberedRules
     });
     await chrome.storage.local.set({ lastRulesUpdate: Date.now(), rulesCount: numberedRules.length });
-    console.log(`[WebflixBlocker/BG] ✅ ${numberedRules.length} règles chargées`);
+    console.log(`[StreamBlocker/BG] ✅ ${numberedRules.length} règles chargées`);
   } catch (err) {
-    console.warn('[WebflixBlocker/BG] ⚠️ Règles distantes non disponibles:', err.message);
+    console.warn('[StreamBlocker/BG] ⚠️ Règles distantes non disponibles:', err.message);
   }
 }
 
@@ -305,10 +305,10 @@ async function registerCustomDomains(domains) {
         }
       ];
       await chrome.scripting.registerContentScripts(scripts);
-      console.log(`[WebflixBlocker/BG] ✅ Scripts injectés dynamiquement sur ${domains.length} domaines`);
+      console.log(`[StreamBlocker/BG] ✅ Scripts injectés dynamiquement sur ${domains.length} domaines`);
     }
   } catch (err) {
-    console.error('[WebflixBlocker/BG] ❌ Erreur registerContentScripts:', err);
+    console.error('[StreamBlocker/BG] ❌ Erreur registerContentScripts:', err);
   }
 }
 
@@ -327,7 +327,7 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async (details) => {
 
   // Pub connue → fermer
   if (isAdHostname(hostname)) {
-    console.log(`[WebflixBlocker/BG] 🚫 Pub connue: ${hostname}`);
+    console.log(`[StreamBlocker/BG] 🚫 Pub connue: ${hostname}`);
     if (await safeCloseTab(details.tabId)) {
       await incrementBlockedCount(hostname);
       notifyBlocked(hostname);
@@ -346,7 +346,7 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async (details) => {
       const fromPlayer    = isPlayerSource(sourceHost);
 
       if (fromStreaming || fromPlayer) {
-        console.log(`[WebflixBlocker/BG] 🚫 Popup suspect depuis ${sourceHost} → ${hostname}`);
+        console.log(`[StreamBlocker/BG] 🚫 Popup suspect depuis ${sourceHost} → ${hostname}`);
         if (await safeCloseTab(details.tabId)) {
           await incrementBlockedCount(hostname);
           notifyBlocked(hostname);
@@ -361,7 +361,7 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async (details) => {
   if (lastUserClickTime > 0) {
     const timeSinceClick = Date.now() - lastUserClickTime;
     if (timeSinceClick >= 0 && timeSinceClick < HEURISTIC_WINDOW_MS) {
-      console.log(`[WebflixBlocker/BG] 🚫 Heuristique (${timeSinceClick}ms): ${hostname}`);
+      console.log(`[StreamBlocker/BG] 🚫 Heuristique (${timeSinceClick}ms): ${hostname}`);
       if (await safeCloseTab(details.tabId)) {
         await incrementBlockedCount(hostname + ' [timing]');
         notifyBlocked(hostname);
@@ -382,7 +382,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (!hostname) return;
 
   if (isAdHostname(hostname)) {
-    console.log(`[WebflixBlocker/BG] 🚫 Tab pub détecté: ${hostname}`);
+    console.log(`[StreamBlocker/BG] 🚫 Tab pub détecté: ${hostname}`);
     if (await safeCloseTab(tabId)) {
       await incrementBlockedCount(hostname);
       notifyBlocked(hostname);
@@ -390,8 +390,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     return;
   }
 
-  // Badge sur les onglets webflix uniquement
-  if (hostname.includes('webflix.lol')) {
+  // Badge sur les onglets de streaming uniquement
+  if (isStreamingSiteSource(hostname)) {
     updateBadge();
   }
 });
@@ -440,13 +440,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             : { enableRulesetIds: [], disableRulesetIds: ['ruleset_main'] }
         );
       } catch (e) {
-        console.warn('[WebflixBlocker/BG] DNR toggle error:', e.message);
+        console.warn('[StreamBlocker/BG] DNR toggle error:', e.message);
       }
 
       // Mettre à jour le badge
       await updateBadge();
 
-      console.log(`[WebflixBlocker/BG] Protection ${newEnabled ? '✅ activée' : '⏸️ désactivée'}`);
+      console.log(`[StreamBlocker/BG] Protection ${newEnabled ? '✅ activée' : '⏸️ désactivée'}`);
       sendResponse({ ok: true, enabled: newEnabled });
     });
     return true; // Async
@@ -517,10 +517,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(async () => {
   await chrome.alarms.clearAll();
   await setupAlarms();
-  console.log('[WebflixBlocker/BG] Extension installée/mise à jour');
+  console.log('[StreamBlocker/BG] Extension installée/mise à jour');
 });
 
 // Badge initial
 updateBadge();
 
-console.log('[WebflixBlocker/BG] ✅ v1.5 démarré — Architecture robuste');
+console.log('[StreamBlocker/BG] ✅ v1.5 démarré — Architecture robuste');

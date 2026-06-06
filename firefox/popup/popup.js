@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const statusText     = document.getElementById('statusText');
   const mainToggle     = document.getElementById('mainToggle');
   const resetBtn       = document.getElementById('resetBtn');
-  const openWebflixBtn = document.getElementById('openWebflix');
+  const openGithubBtn  = document.getElementById('openGithub');
   const toast          = document.getElementById('toast');
   const siteInfo       = document.getElementById('siteInfo');
-  const notWebflix     = document.getElementById('notWebflix');
+  const notProtected   = document.getElementById('notProtected');
   const siteStatusText = document.getElementById('siteStatusText');
   const historyList    = document.getElementById('historyList');
   const updateRulesBtn = document.getElementById('updateRulesBtn');
@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     showToast('✅ Stats réinitialisées !');
   });
 
-  // ─── Ouvrir Webflix ──────────────────────────────────────────────────────────
-  openWebflixBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://webflix.lol' });
+  // ─── Ouvrir GitHub ───────────────────────────────────────────────────────────
+  openGithubBtn.addEventListener('click', () => {
+    chrome.tabs.create({ url: 'https://github.com/MasterrSplinter/extension_bypass' });
   });
 
   // ─── Ouvrir la page d'options ────────────────────────────────────────────────
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (isProtected) {
         if (siteInfo)    siteInfo.style.display    = 'flex';
-        if (notWebflix)  notWebflix.style.display  = 'none';
+        if (notProtected)  notProtected.style.display  = 'none';
         if (siteStatusText) {
           siteStatusText.textContent = enabled ? 'Protection complète' : 'Protection désactivée';
         }
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (siteLabel) siteLabel.textContent = hostname;
       } else {
         if (siteInfo)    siteInfo.style.display    = 'none';
-        if (notWebflix)  notWebflix.style.display  = 'block';
+        if (notProtected)  notProtected.style.display  = 'block';
         if (currentDomainLabel) currentDomainLabel.textContent = hostname;
         
         if (addDomainBtn) {

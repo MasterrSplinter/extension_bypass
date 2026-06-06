@@ -9,7 +9,7 @@
 
   // ─── Bloquer window.open dans le lecteur ────────────────────────────────────
   window.open = function () {
-    console.log('[WebflixBlocker/Player] window.open bloqué');
+    console.log('[StreamBlocker/Player] window.open bloqué');
     return null;
   };
 
@@ -57,7 +57,7 @@
       } catch (e) {}
     });
     if (removed > 0) {
-      console.log(`[WebflixBlocker/Player] ${removed} élément(s) supprimé(s) dans le lecteur`);
+      console.log(`[StreamBlocker/Player] ${removed} élément(s) supprimé(s) dans le lecteur`);
     }
   }
 
@@ -84,7 +84,7 @@
     if (a && isAdDomain(a.href)) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      console.log('[WebflixBlocker/Player] Clic pub bloqué :', a.href);
+      console.log('[StreamBlocker/Player] Clic pub bloqué :', a.href);
     }
   }, true);
 
@@ -96,7 +96,7 @@
       const _origSetAttribute = el.setAttribute.bind(el);
       el.setAttribute = function (name, value) {
         if (name === 'src' && isAdDomain(value)) {
-          console.log('[WebflixBlocker/Player] Script pub bloqué :', value);
+          console.log('[StreamBlocker/Player] Script pub bloqué :', value);
           return;
         }
         return _origSetAttribute(name, value);
@@ -114,5 +114,5 @@
 
   setInterval(cleanPlayerAds, 1500);
 
-  console.log('[WebflixBlocker/Player] ✅ Nettoyeur de lecteur activé');
+  console.log('[StreamBlocker/Player] ✅ Nettoyeur de lecteur activé');
 })();

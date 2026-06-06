@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="chrome/icons/icon128.png" alt="Webflix AdBlocker Pro Logo" width="128">
+  <img src="chrome/icons/icon128.png" alt="Streaming AdBlocker Pro Logo" width="128">
 </p>
 
-<h1 align="center">Webflix AdBlocker Pro</h1>
+<h1 align="center">Streaming AdBlocker Pro</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white" alt="Chrome">
@@ -15,12 +15,12 @@
 </p>
 
 > [!NOTE]
-> **Statut du projet** : Actuellement, cette extension est conçue et optimisée exclusivement pour le site **Webflix**. Cependant, elle a pour vocation d'évoluer à l'avenir afin de prendre en charge et bloquer les publicités sur d'autres plateformes de streaming !
+> **Statut du projet** : Actuellement, cette extension est conçue et optimisée pour bloquer les publicités sur la majorité des plateformes de streaming et lecteurs vidéo tiers.
 
 > [!TIP]
 > **Recommandation optimale** : Pour vous assurer de n'avoir **absolument aucune publicité** sur l'ensemble des lecteurs vidéo, nous vous recommandons fortement de coupler cette extension avec un bloqueur de publicités généraliste classique, tel que **uBlock Origin** ou **Adblock**.
 
-Ce dépôt contient l'extension Webflix AdBlocker Pro. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
+Ce dépôt contient l'extension Streaming AdBlocker Pro. L'extension est déclinée en deux versions adaptées à chaque moteur de navigateur :
 - Dossier `chrome` (pour Google Chrome, Edge, Brave, Kiwi Browser, etc.)
 - Dossier `firefox` (pour Mozilla Firefox)
 
@@ -80,7 +80,7 @@ Nous avons créé un script qui s'occupe de **tout** à votre place.
 
 > [!WARNING]
 > **Limitation Importante sur Firefox (Vidéos en 4K)**
-> Firefox ne supporte pas nativement le format vidéo H.265 (HEVC) pour des raisons de licences payantes. Par conséquent, **le "Lecteur 4K" de Webflix affichera une erreur de lecture (`METADATA_ERR`) sur Firefox**. 
+> Firefox ne supporte pas nativement le format vidéo H.265 (HEVC) pour des raisons de licences payantes. Par conséquent, **les lecteurs 4K (HEVC) afficheront une erreur de lecture (`METADATA_ERR`) sur Firefox**. 
 > 👉 *Solution :* Utilisez simplement un lecteur HD classique dans la liste, ou utilisez la version Chrome/Edge de l'extension si vous souhaitez absolument regarder en 4K.
 
 **Pour un test rapide (Temporaire, sur Firefox classique) :**

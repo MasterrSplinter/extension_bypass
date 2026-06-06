@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webflix AdBlocker Pro</title>
+  <title>Streaming AdBlocker Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -341,15 +341,15 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ─── Not on webflix notice ─── */
-    .not-webflix {
+    /* ─── Not protected notice ─── */
+    .not-protected {
       padding: 16px 20px;
       text-align: center;
       color: var(--text-secondary);
       font-size: 12px;
       line-height: 1.6;
     }
-    .not-webflix-icon { font-size: 32px; margin-bottom: 8px; }
+    .not-protected-icon { font-size: 32px; margin-bottom: 8px; }
 
     /* ─── History section ─── */
     .history-section {
@@ -410,9 +410,9 @@
   <div class="header">
     <div class="header-top">
       <div class="logo">🛡️</div>
-      <div class="header-title">Webflix AdBlocker Pro</div>
+      <div class="header-title">Streaming AdBlocker Pro</div>
     </div>
-    <div class="header-sub">Protection avancée pour webflix.lol</div>
+    <div class="header-sub">Protection avancée pour le streaming</div>
   </div>
 
   <div class="status-section">
@@ -478,12 +478,12 @@
   </div>
 
   <div class="site-info" id="siteInfo">
-    <span class="site-badge" id="siteLabel">webflix.lol</span>
+    <span class="site-badge" id="siteLabel">site</span>
     <span class="site-status-text" id="siteStatusText">Protection complète</span>
   </div>
 
-  <div id="notWebflix" class="not-webflix" style="display:none;">
-    <div class="not-webflix-icon">💤</div>
+  <div id="notProtected" class="not-protected" style="display:none;">
+    <div class="not-protected-icon">💤</div>
     <p>Extension en sommeil sur <br><strong id="currentDomainLabel">ce site</strong></p>
     <button class="btn btn-primary" id="addDomainBtn" style="margin-top: 12px; width: 100%;">⚡ Activer sur ce site</button>
   </div>
@@ -492,7 +492,7 @@
     <button class="btn" id="optionsBtn" title="Gérer les sites" style="flex: 0.5;">⚙️</button>
     <button class="btn" id="resetBtn" title="Reset stats" style="flex: 0.5;">🗑️</button>
     <button class="btn" id="updateRulesBtn" title="Màj règles" style="flex: 0.5;">🔄</button>
-    <button class="btn btn-primary" id="openWebflix" style="flex: 1.5;">🎬 Webflix</button>
+    <button class="btn btn-primary" id="openGithub" style="flex: 1.5;">⭐ GitHub</button>
   </div>
 
   <div class="toast" id="toast">✅ Stats réinitialisées !</div>

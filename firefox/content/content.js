@@ -1,5 +1,5 @@
 /**
- * content.js — Script injecté (ISOLATED WORLD) sur webflix.lol et sites de streaming
+ * content.js — Script injecté (ISOLATED WORLD) sur les sites de streaming
  * v1.5 — Gère l'état enabled et le communique au MAIN WORLD via CustomEvent
  *
  * RÔLE PRINCIPAL :
@@ -32,7 +32,7 @@
         removeAntiAdblockMessages();
       }
 
-      console.log(`[WebflixBlocker] Protection ${protectionEnabled ? '✅ activée' : '⏸️ désactivée'} sur ${location.hostname}`);
+      console.log(`[StreamBlocker] Protection ${protectionEnabled ? '✅ activée' : '⏸️ désactivée'} sur ${location.hostname}`);
     });
   }
 
@@ -51,7 +51,7 @@
       if (newEnabled !== protectionEnabled) {
         protectionEnabled = newEnabled;
         syncEnabledToMainWorld(protectionEnabled);
-        console.log(`[WebflixBlocker] Protection mise à jour: ${protectionEnabled ? '✅ ON' : '⏸️ OFF'}`);
+        console.log(`[StreamBlocker] Protection mise à jour: ${protectionEnabled ? '✅ ON' : '⏸️ OFF'}`);
 
         // Démarrer/arrêter l'observer
         if (protectionEnabled) {
@@ -82,7 +82,7 @@
         if (!isWhitelisted(u.hostname)) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          console.log('[WebflixBlocker] Lien _blank bloqué :', href);
+          console.log('[StreamBlocker] Lien _blank bloqué :', href);
           return;
         }
       } catch {}
@@ -128,7 +128,7 @@
       } catch (e) {}
     });
     if (removed > 0) {
-      console.log(`[WebflixBlocker] ${removed} élément(s) publicitaire(s) supprimé(s)`);
+      console.log(`[StreamBlocker] ${removed} élément(s) publicitaire(s) supprimé(s)`);
     }
   }
 
@@ -137,7 +137,7 @@
     document.querySelectorAll('style').forEach(style => {
       if (style.textContent.includes('adblock') || style.textContent.includes('adblocker')) {
         style.remove();
-        console.log('[WebflixBlocker] Style anti-adblock supprimé');
+        console.log('[StreamBlocker] Style anti-adblock supprimé');
       }
     });
   }
@@ -149,7 +149,7 @@
       const text = el.textContent.toLowerCase();
       if (keywords.some(k => text.includes(k)) && el.children.length < 5) {
         el.remove();
-        console.log('[WebflixBlocker] Message anti-adblock supprimé');
+        console.log('[StreamBlocker] Message anti-adblock supprimé');
       }
     });
   }
@@ -178,7 +178,7 @@
     if (isAdUrl(target.href)) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      console.log('[WebflixBlocker] Clic bloqué vers :', target.href);
+      console.log('[StreamBlocker] Clic bloqué vers :', target.href);
     }
   }, true);
 
