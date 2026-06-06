@@ -170,6 +170,18 @@
       console.log('[StreamBlocker] Lien Telegram/VIP supprimé');
     });
 
+    // Supprimer la bannière image (qui contient le texte cuit dans les pixels)
+    document.querySelectorAll('img[src*="abonnements.png"], img[src*="banners/abonnement"]').forEach(el => {
+      const link = el.closest('a');
+      if (link) {
+        link.remove();
+        console.log('[StreamBlocker] Bannière image (lien) supprimée');
+      } else {
+        el.remove();
+        console.log('[StreamBlocker] Bannière image supprimée');
+      }
+    });
+
     // Supprimer la bannière d'abonnement (détection agressive sans espaces)
     document.querySelectorAll('div, a, section, p, span').forEach(el => {
       if (el.children.length > 15) return; // Sécurité pour ne pas supprimer la page entière
