@@ -229,6 +229,35 @@
     const target = e.target.closest('a[href]');
     if (!target) return;
     
+    if (!e.isTrusted) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      console.log('[StreamBlocker] Clic programmatique bloqué vers :', target.href);
+      return;
+    }
+
+    try {
+      const rect = target.getBoundingClientRect();
+      const isHuge = rect.width > window.innerWidth * 0.5 && rect.height > window.innerHeight * 0.5;
+      if (isHuge && target.href) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        target.remove();
+        console.log('[StreamBlocker] Overlay géant bloqué et supprimé vers :', target.href);
+        return;
+      }
+
+      if (window !== window.top && target.target === '_blank') {
+        const linkHost = new URL(target.href).hostname;
+        if (linkHost !== location.hostname) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          console.log('[StreamBlocker] Clic externe depuis iframe bloqué vers :', target.href);
+          return;
+        }
+      }
+    } catch (err) {}
+    
     if (location.hostname.includes('senpai-stream') && e.target.closest('[wire\\:click]')) {
       e.preventDefault();
       target.removeAttribute('target');
