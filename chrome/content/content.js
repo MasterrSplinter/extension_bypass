@@ -77,6 +77,12 @@
     const target = el.getAttribute('target') || '';
 
     if (target === '_blank' && href && !href.startsWith('#') && !href.startsWith('javascript')) {
+      if (location.hostname.includes('senpai-stream') && (el.hasAttribute('wire:click') || el.closest('[wire\\:click]'))) {
+        e.preventDefault();
+        el.removeAttribute('target');
+        console.log('[StreamBlocker] Senpai Stream: Lien _blank neutralisé (autorisé pour Livewire)');
+        return;
+      }
       try {
         const u = new URL(href, window.location.href);
         if (!isWhitelisted(u.hostname)) {
