@@ -118,3 +118,5 @@ Pour contribuer :
 ## ⚖️ Licence
 
 Ce projet est distribué sous la licence MIT.
+
+*Développé avec l'aide de l'IA **Antigravity** de Google DeepMind.*
