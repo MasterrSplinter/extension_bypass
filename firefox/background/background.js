@@ -81,7 +81,7 @@ const WHITELIST_DOMAINS = [
   'fonts.googleapis.com', 'fonts.gstatic.com'
 ];
 
-const PLAYER_SOURCE_PATTERNS = [
+const PLAYER_SOURCE_PATTERNS = ['smartlink', 
   'wavewatch', 'bysebuho', 'nzn3', 'viperstream', 'viperstre', 'viper4k',
   'filemoon', 'streamtape', 'dood', 'uqload', 'turbovid',
   'supervideo', 'streamlare', 'player4k', 'embedme', 'embtaku', 'streamvid',
