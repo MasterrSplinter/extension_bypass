@@ -302,10 +302,9 @@
   // ══════════════════════════════════════════════════════════════════
   window.addEventListener('__wfb_user_click__', (e) => {
     try {
-      // Bloquer le clic manuel sur le bouton Play de Webflix pour éviter la popup résiduelle
+      // Si le clic concerne le bouton Play de Webflix
       if (location.hostname.includes('webflix.lol') && e.detail && e.detail.isPlayBtn) {
-          console.log('[StreamBlocker] Webflix : Clic manuel sur Play neutralisé');
-          return;
+          console.log('[StreamBlocker] Webflix : Clic manuel sur Play loggé');
       }
       chrome.runtime.sendMessage({ type: 'USER_CLICK' });
     } catch {}

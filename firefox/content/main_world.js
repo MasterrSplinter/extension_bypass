@@ -251,24 +251,19 @@
     if (webflixBypassed) return;
     if (!location.hostname.includes('webflix.lol')) return;
 
-    // Cherche le bouton avec l'icône Play spécifique à Webflix
-    const playIcon = document.querySelector('svg.lucide-play');
-    if (!playIcon) return;
+    // L'auto-clic (simul) ne fonctionne pas de manire fiable avec le player Webflix (React)
+    // Nous laissons l'utilisateur cliquer manuellement mais nous renforons le nettoyage des overlays.
+    hideAdOverlays();
     
-    const playBtn = playIcon.closest('button');
-    if (playBtn && !playBtn.dataset.wfClicked) {
-      playBtn.dataset.wfClicked = 'true';
-      console.log('[StreamBlocker/MAIN] Webflix : Bouton Play détecté ! Lancement du bypass automatique...');
-      
-      // Clic 1
-      try { playBtn.dispatchEvent(new CustomEvent('__wfb_user_click__', { bubbles: true, detail: { isPlayBtn: true } })); _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
-      
-      // Clic 2 (après un délai pour laisser le temps à React et à l'intercepteur de popups)
-      setTimeout(() => {
-        console.log('[StreamBlocker/MAIN] Webflix : Auto-clic 2/2...');
-        try { playBtn.dispatchEvent(new CustomEvent('__wfb_user_click__', { bubbles: true, detail: { isPlayBtn: true } })); _nativeClick.call(playBtn); } catch (e) { playBtn.click(); }
+    const playIcon = document.querySelector('svg.lucide-play');
+    if (playIcon) {
+      const playBtn = playIcon.closest('button');
+      if (playBtn) {
+        // Optionnel : s'assurer que le bouton est au-dessus
+        playBtn.style.position = 'relative';
+        playBtn.style.zIndex = '9999999';
         webflixBypassed = true;
-      }, 500);
+      }
     }
   }
 
@@ -277,27 +272,31 @@
   // ══════════════════════════════════════════════════════════════════
   function hideAdOverlays() {
     if (!window.__WFB_ENABLED) return;
-    const OVERLAY_SELECTORS = [
-      '.mo.sh',
-      '[class*="unlock"][class*="show"]',
-      '[class*="ad-gate"]', '[class*="ad-wall"]',
-      '[class*="adgate"]', '[class*="popup-overlay"]',
-      '[class*="interstitial"]',
-      'div[style*="position: fixed"][style*="z-index: 9"]',
-      'div[style*="position:fixed"][style*="z-index:9"]'
-    ];
-    OVERLAY_SELECTORS.forEach(sel => {
-      try {
-        document.querySelectorAll(sel).forEach(el => {
-          if (el.closest('video') || el.closest('.player-controls') || el.closest('nav')) return;
-          const rect = el.getBoundingClientRect();
-          if (rect.width > 200 && rect.height > 100) {
-            el.style.setProperty('display', 'none', 'important');
-            el.classList.remove('sh', 'show', 'active', 'visible');
-            console.log('[StreamBlocker/MAIN] Overlay masqué :', sel);
+    const elements = document.querySelectorAll('a, div, iframe');
+    elements.forEach(el => {
+      if (el.tagName === 'A' && el.href && isAdUrl(el.href)) {
+        el.remove();
+        return;
+      }
+      
+      const rect = el.getBoundingClientRect();
+      const isGiant = rect.width > window.innerWidth * 0.8 && rect.height > window.innerHeight * 0.8;
+      
+      if (isGiant) {
+        const style = window.getComputedStyle(el);
+        const isClickable = (el.tagName === 'A' || style.cursor === 'pointer');
+        const isOverlay = (style.position === 'absolute' || style.position === 'fixed' || style.position === 'relative');
+        const isTransparent = (style.opacity < 0.1 || style.backgroundColor === 'rgba(0, 0, 0, 0)' || style.backgroundColor === 'transparent');
+        const isHighZIndex = parseInt(style.zIndex, 10) > 1000;
+        
+        if (isClickable || (isOverlay && isTransparent && isHighZIndex)) {
+          // Ne pas supprimer le conteneur du lecteur vido lui-mme
+          if (!el.querySelector('video') && !el.classList.contains('jwplayer')) {
+            console.log('[StreamBlocker/MAIN] Overlay gant/transparent publicitaire supprim', el);
+            el.remove();
           }
-        });
-      } catch (e) {}
+        }
+      }
     });
   }
 
