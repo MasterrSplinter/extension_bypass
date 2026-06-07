@@ -12,9 +12,11 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Chrome/Firefox dev profiles
-chrome/ChromeProfile/
-firefox/webflix-adblocker.xpi
+# Dev profiles & testing
+chrome/
+firefox/
+tests/
 
-# Ancien monolithe (supprimé après refactoring modulaire)
-src/content/main_world.OLD.js
+# Dev-only docs
+security.md
+.github/
