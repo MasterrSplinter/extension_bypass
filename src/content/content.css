@@ -1,31 +1,36 @@
 /**
  * content.css — Styles injectés sur les sites de streaming
  * Cache les éléments publicitaires résiduels via CSS
+ *
+ * IMPORTANT: Tous les sélecteurs sont préfixés par html:not(.wfb-disabled)
+ * pour permettre la désactivation dynamique via content.js.
+ * Quand la protection est désactivée, content.js ajoute la classe .wfb-disabled
+ * sur <html>, ce qui neutralise toutes les règles ci-dessous.
  */
 
 /* Supprimer les overlays publicitaires */
-div[class*="popup"]:not(.player-popup),
-div[id*="popup"]:not(#player-popup),
-div[class*="ad-overlay"],
-div[id*="ad-overlay"],
-div[class*="ad-banner"],
-div[class*="advertisement"],
-div[class*="advert-container"],
-div[class*="sponsor-"],
-[class*="AdContainer"],
-[id*="AdContainer"],
-[class*="ad_container"],
-[id*="ad_container"],
-ins.adsbygoogle,
-[id^="google_ads"],
-[data-ad-client],
-[data-ad-slot],
-.mgid-widget,
-.taboola-widget,
-[id*="taboola"],
-[class*="taboola"],
-[id*="outbrain"],
-[class*="outbrain"] {
+html:not(.wfb-disabled) div[class*="popup"]:not(.player-popup),
+html:not(.wfb-disabled) div[id*="popup"]:not(#player-popup),
+html:not(.wfb-disabled) div[class*="ad-overlay"],
+html:not(.wfb-disabled) div[id*="ad-overlay"],
+html:not(.wfb-disabled) div[class*="ad-banner"],
+html:not(.wfb-disabled) div[class*="advertisement"],
+html:not(.wfb-disabled) div[class*="advert-container"],
+html:not(.wfb-disabled) div[class*="sponsor-"],
+html:not(.wfb-disabled) [class*="AdContainer"],
+html:not(.wfb-disabled) [id*="AdContainer"],
+html:not(.wfb-disabled) [class*="ad_container"],
+html:not(.wfb-disabled) [id*="ad_container"],
+html:not(.wfb-disabled) ins.adsbygoogle,
+html:not(.wfb-disabled) [id^="google_ads"],
+html:not(.wfb-disabled) [data-ad-client],
+html:not(.wfb-disabled) [data-ad-slot],
+html:not(.wfb-disabled) .mgid-widget,
+html:not(.wfb-disabled) .taboola-widget,
+html:not(.wfb-disabled) [id*="taboola"],
+html:not(.wfb-disabled) [class*="taboola"],
+html:not(.wfb-disabled) [id*="outbrain"],
+html:not(.wfb-disabled) [class*="outbrain"] {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -34,25 +39,20 @@ ins.adsbygoogle,
   overflow: hidden !important;
 }
 
-/* Supprimer les iframes publicitaires (conserver le lecteur vidéo) */
-iframe:not([src*="player4k"]):not([src*="viperstream"]):not([src*="streamvid"]):not([src*="embedme"]):not([src*="filemoon"]):not([src*="webflix"]):not([src*="youtube"]):not([src*="vimeo"]):not([allowfullscreen]):not([id*="player"]):not([class*="player"]):not([name*="player"]) {
-  /* On ne bloque pas tous les iframes car le lecteur en est un */
-}
-
 /* Bloquer les iframes clairement publicitaires */
-iframe[src*="popads"],
-iframe[src*="popcash"],
-iframe[src*="exoclick"],
-iframe[src*="adsterra"],
-iframe[src*="propellerads"],
-iframe[src*="juicyads"],
-iframe[src*="tsyndicate"],
-iframe[src*="pupupul"],
-iframe[src*="clkme"],
-iframe[src*="moonads"],
-iframe[src*="clickaine"],
-iframe[src*="smartadserver"],
-iframe[src*="creativecdn"] {
+html:not(.wfb-disabled) iframe[src*="popads"],
+html:not(.wfb-disabled) iframe[src*="popcash"],
+html:not(.wfb-disabled) iframe[src*="exoclick"],
+html:not(.wfb-disabled) iframe[src*="adsterra"],
+html:not(.wfb-disabled) iframe[src*="propellerads"],
+html:not(.wfb-disabled) iframe[src*="juicyads"],
+html:not(.wfb-disabled) iframe[src*="tsyndicate"],
+html:not(.wfb-disabled) iframe[src*="pupupul"],
+html:not(.wfb-disabled) iframe[src*="clkme"],
+html:not(.wfb-disabled) iframe[src*="moonads"],
+html:not(.wfb-disabled) iframe[src*="clickaine"],
+html:not(.wfb-disabled) iframe[src*="smartadserver"],
+html:not(.wfb-disabled) iframe[src*="creativecdn"] {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -61,21 +61,21 @@ iframe[src*="creativecdn"] {
 }
 
 /* Supprimer les modales anti-adblock */
-body.no-scroll,
-body[class*="adblock"],
-body[class*="blocked"] {
+html:not(.wfb-disabled) body.no-scroll,
+html:not(.wfb-disabled) body[class*="adblock"],
+html:not(.wfb-disabled) body[class*="blocked"] {
   overflow: auto !important;
   height: auto !important;
 }
 
 /* Empêcher les masquages de contenu par anti-adblock */
-html:not(.webflix-blocker-active) body > *:not(script):not(style):not(link) {
+html:not(.wfb-disabled):not(.webflix-blocker-active) body > *:not(script):not(style):not(link) {
   opacity: 1 !important;
   pointer-events: auto !important;
   filter: none !important;
 }
 
 /* Senpai Stream: Cacher la banniere d'abonnement */
-img[src*="/storage/banners/abonnements.png"] {
+html:not(.wfb-disabled) img[src*="/storage/banners/abonnements.png"] {
   display: none !important;
 }

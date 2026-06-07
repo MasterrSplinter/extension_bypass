@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- [M2] Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; img-src 'self'; connect-src 'none';">
   <title>Options - Streaming AdBlocker Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,21 +36,27 @@
       width: 300px; height: 100px; background: var(--accent-glow);
       border-radius: 50%; filter: blur(60px); pointer-events: none;
     }
-    .logo {
-      font-size: 40px; margin-bottom: 10px; text-shadow: 0 4px 20px var(--accent-glow);
-    }
+    .logo { font-size: 40px; margin-bottom: 10px; text-shadow: 0 4px 20px var(--accent-glow); }
     h1 {
       font-size: 24px; font-weight: 700; margin-bottom: 8px;
       background: linear-gradient(90deg, #f1f5f9, var(--accent-light));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     p.subtitle { color: var(--text-secondary); font-size: 14px; }
-    
+
     .content { padding: 30px; }
-    
-    .input-group {
-      display: flex; gap: 10px; margin-bottom: 30px;
+
+    /* Section title */
+    .section-title {
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
     }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .input-group { display: flex; gap: 10px; margin-bottom: 14px; }
     input[type="text"] {
       flex: 1; background: var(--bg-card); border: 1px solid var(--border);
       color: var(--text-primary); padding: 12px 16px; border-radius: 8px; font-size: 14px;
@@ -57,9 +66,14 @@
       outline: none; border-color: var(--accent-light); box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
     }
     input[type="text"]::placeholder { color: var(--text-secondary); opacity: 0.7; }
-    
+
+    /* [S8] Boutons export/import */
+    .transfer-bar {
+      display: flex; gap: 8px; margin-bottom: 24px;
+    }
+
     .btn {
-      padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; font-size: 14px;
+      padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px;
       cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
     }
     .btn-primary {
@@ -70,15 +84,18 @@
       background: linear-gradient(135deg, var(--accent-light), var(--accent));
       transform: translateY(-2px); box-shadow: 0 6px 16px var(--accent-glow);
     }
+    .btn-secondary {
+      background: var(--bg-card); color: var(--text-primary);
+      border: 1px solid var(--border); padding: 10px 16px; font-size: 13px;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(124,58,237,0.1); }
     .btn-danger {
-      background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2);
-      padding: 8px 12px; font-size: 12px;
+      background: rgba(239, 68, 68, 0.1); color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 12px; font-size: 12px;
     }
     .btn-danger:hover { background: var(--danger); color: white; }
 
-    .domain-list {
-      display: flex; flex-direction: column; gap: 10px;
-    }
+    .domain-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
     .domain-item {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--bg-card); padding: 12px 20px; border-radius: 8px;
@@ -86,11 +103,26 @@
     }
     .domain-item:hover { border-color: var(--border); }
     .domain-name { font-size: 14px; font-weight: 500; }
+
+    /* [S5] Disabled sites list */
+    .disabled-site-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(239,68,68,0.05); padding: 10px 16px; border-radius: 8px;
+      border: 1px solid rgba(239,68,68,0.15); margin-bottom: 6px;
+    }
+    .disabled-site-name { font-size: 13px; color: var(--danger); display: flex; align-items: center; gap: 6px; }
+    .btn-re-enable {
+      background: rgba(16,185,129,0.1); color: var(--success);
+      border: 1px solid rgba(16,185,129,0.2); padding: 5px 10px; font-size: 11px;
+      border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+    }
+    .btn-re-enable:hover { background: var(--success); color: white; }
+
     .empty-state {
-      text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px;
+      text-align: center; padding: 30px 20px; color: var(--text-secondary); font-size: 14px;
       background: var(--bg-card); border-radius: 8px; border: 1px dashed var(--border);
     }
-    
+
     .toast {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
       background: var(--bg-card); border: 1px solid var(--success); border-radius: 8px;
@@ -99,6 +131,9 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.error { border-color: var(--danger); color: var(--danger); }
+
+    /* Hidden file input */
+    #importInput { display: none; }
   </style>
 </head>
 <body>
@@ -106,16 +141,83 @@
     <div class="header">
       <div class="logo">🛡️</div>
       <h1>Sites Personnalisés</h1>
-      <p class="subtitle">Gérez la liste des sites sur lesquels l'extension est active manuellement.</p>
+      <p class="subtitle">Gérez les sites sur lesquels activer ou désactiver la protection.</p>
     </div>
     <div class="content">
+
+      <!-- Section : Ajouter un domaine -->
+      <div class="section-title">➕ Ajouter un site</div>
       <form id="addForm" class="input-group">
         <input type="text" id="domainInput" placeholder="ex: mon-site-streaming.com" required autocomplete="off">
         <button type="submit" class="btn btn-primary">Ajouter</button>
       </form>
+
+      <!-- [S8] Boutons export / import -->
+      <div class="section-title">💾 Sauvegarde</div>
+      <div class="transfer-bar">
+        <button class="btn btn-secondary" id="exportBtn">📤 Exporter mes domaines</button>
+        <button class="btn btn-secondary" id="importBtn">📥 Importer</button>
+        <input type="file" id="importInput" accept=".json">
+      </div>
+
+      <!-- Section : Sites custom actifs -->
+      <div class="section-title">🌐 Sites sous protection</div>
       <div id="domainList" class="domain-list">
         <!-- Rempli en JS -->
       </div>
+
+      <!-- [S5] Section : Sites désactivés -->
+      <div class="section-title">⏸️ Protection désactivée ici</div>
+      <div id="disabledSitesList">
+        <!-- Rempli en JS -->
+      </div>
+
+      <!-- Section : Paramètres avancés -->
+      <div class="section-title" style="margin-top: 24px;">⚙️ Paramètres avancés</div>
+
+      <!-- Notification level -->
+      <div class="domain-item" style="margin-bottom: 10px;">
+        <div>
+          <div class="domain-name">🔔 Notifications</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Niveau de notification lors du blocage</div>
+        </div>
+        <select id="notificationLevel" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer;">
+          <option value="silent">🔇 Silencieux</option>
+          <option value="minimal" selected>🔔 Minimal</option>
+          <option value="verbose">📢 Verbose</option>
+        </select>
+      </div>
+
+      <!-- Debug toggle -->
+      <div class="domain-item">
+        <div>
+          <div class="domain-name">🐛 Mode debug</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Active les logs détaillés dans la console</div>
+        </div>
+        <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer;">
+          <input type="checkbox" id="debugToggle" style="opacity: 0; width: 0; height: 0;">
+          <span style="position: absolute; inset: 0; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; transition: 0.3s;"></span>
+          <span id="debugSlider" style="position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; background: var(--text-secondary); border-radius: 50%; transition: 0.3s;"></span>
+        </label>
+      </div>
+
+      <!-- Cookie cleaning toggle -->
+      <div class="domain-item" style="margin-top: 10px;">
+        <div>
+          <div class="domain-name">🧹 Nettoyage cookies tracking</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Supprime automatiquement les cookies des réseaux publicitaires (toutes les 30 min)</div>
+          <div id="cookieStats" style="font-size: 11px; color: var(--accent-light); margin-top: 4px;"></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-danger" id="cleanNowBtn" title="Nettoyer maintenant" style="white-space: nowrap;">🧹 Maintenant</button>
+          <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; flex-shrink: 0;">
+            <input type="checkbox" id="cookieCleaningToggle" style="opacity: 0; width: 0; height: 0;">
+            <span style="position: absolute; inset: 0; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; transition: 0.3s;"></span>
+            <span id="cookieSlider" style="position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; background: var(--text-secondary); border-radius: 50%; transition: 0.3s;"></span>
+          </label>
+        </div>
+      </div>
+
     </div>
   </div>
   <div id="toast" class="toast"></div>

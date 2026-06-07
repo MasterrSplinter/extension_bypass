@@ -359,5 +359,203 @@
       "urlFilter": "||ero-advertising.com^",
       "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
     }
+  },
+  {
+    "id": 41,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.us^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 42,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.com^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 43,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.net^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "comment": "Bloquer les ressources pub connues initialisées par Empire Streaming (scripts, images, iframes)",
+    "id": 44,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popads.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 45,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||exoclick.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 46,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tsyndicate.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 47,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||moonads.to^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 48,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsterra.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 49,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||propellerads.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 50,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||realsrv.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 51,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||juicyads.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 52,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||trafficjunky.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 53,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||creativecdn.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 54,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||miniroad.store^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 55,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||northseize.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 56,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||otieu.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 57,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||clickaine.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 58,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||stake.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "main_frame"]
+    }
+  },
+  {
+    "id": 59,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hilltopads.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 60,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popcash.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
   }
 ]

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Streaming AdBlocker Pro",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Bloqueur de publicités et popups spécialisé pour les sites de streaming. Léger, rapide et invisible. Manifest V3.",
   "browser_specific_settings": {
     "gecko": {
@@ -22,7 +22,8 @@
     "tabs",
     "webNavigation",
     "alarms",
-    "notifications"
+    "notifications",
+    "cookies"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -54,7 +55,10 @@
         "*://*.cpasmieux.com/*",
         "*://*.cpasmieux.pro/*",
         "*://*.zone-telechargement.beauty/*",
-        "*://*.senpai-stream.quest/*"
+        "*://*.senpai-stream.quest/*",
+        "*://*.empire-streaming.us/*",
+        "*://*.empire-streaming.com/*",
+        "*://*.empire-streaming.net/*"
       ],
       "js": [
         "content/content.js"
@@ -65,6 +69,41 @@
       "run_at": "document_start",
       "all_frames": true,
       "match_about_blank": true
+    },
+    {
+      "comment": "ISOLATED WORLD — Lecteurs vidéo externes (player_cleaner.js)",
+      "matches": [
+        "*://*.wavewatch.top/*",
+        "*://*.bysebuho.com/*",
+        "*://*.nzn3.org/*",
+        "*://*.player4k.com/*",
+        "*://*.viperstreamz.com/*",
+        "*://*.viperstream.xyz/*",
+        "*://*.viper4k.com/*",
+        "*://*.streamvid.net/*",
+        "*://*.embedme.top/*",
+        "*://*.filemoon.sx/*",
+        "*://*.filemoon.in/*",
+        "*://*.filemoon.com/*",
+        "*://*.filemoon.to/*",
+        "*://*.doodstream.com/*",
+        "*://*.dood.wf/*",
+        "*://*.dood.la/*",
+        "*://*.streamtape.com/*",
+        "*://*.streamtape.net/*",
+        "*://*.turbovid.me/*",
+        "*://*.supervideo.tv/*",
+        "*://*.mixdrop.co/*",
+        "*://*.mixdrop.to/*",
+        "*://*.mp4upload.com/*",
+        "*://*.fembed.com/*",
+        "*://*.fembed.net/*"
+      ],
+      "js": [
+        "content/player_cleaner.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ],
   "options_ui": {
@@ -87,13 +126,13 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/*.png",
-        "content/main_world.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"]
+    },
+    {
+      "comment": "main_world.js doit être accessible depuis toutes les origines car content.js s'exécute dans les iframes cross-origin des lecteurs vidéo. La protection du flag d'activation est assurée par le nonce (correctif H3).",
+      "resources": ["content/main_world.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

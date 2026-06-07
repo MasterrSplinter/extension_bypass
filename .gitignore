@@ -1,5 +1,20 @@
+# Build output
 dist/
 *.zip
+
+# Dependencies
+node_modules/
+
+# IDE / OS
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db
+
+# Chrome/Firefox dev profiles
 chrome/ChromeProfile/
 firefox/webflix-adblocker.xpi
-*.log
+
+# Ancien monolithe (supprimé après refactoring modulaire)
+src/content/main_world.OLD.js

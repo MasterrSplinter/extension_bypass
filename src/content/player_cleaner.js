@@ -4,6 +4,8 @@
  * Supprime les overlays publicitaires à l'intérieur du lecteur vidéo
  */
 
+import { AD_DOMAINS_PLAYER, isAdDomain } from '../shared/domains.js';
+
 (function () {
   'use strict';
 
@@ -66,18 +68,7 @@
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
   // ─── Intercepter les redirections ───────────────────────────────────────────
-  const AD_DOMAINS_PLAYER = [
-    'popads.net', 'popcash.net', 'exoclick.com', 'adsterra.com',
-    'propellerads.com', 'tsyndicate.com', 'pupupul.site', 'moonads.to',
-    'clickaine.com', 'juicyads.com', 'adspyglass.com'
-  ];
 
-  function isAdDomain(url) {
-    try {
-      const u = new URL(url, location.href);
-      return AD_DOMAINS_PLAYER.some(d => u.hostname === d || u.hostname.endsWith('.' + d));
-    } catch { return false; }
-  }
 
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');

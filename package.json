@@ -1,0 +1,15 @@
+{
+  "name": "streaming-adblocker-pro",
+  "version": "1.7.0",
+  "private": true,
+  "type": "module",
+  "description": "Extension navigateur de blocage publicitaire pour sites de streaming",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "build:watch": "node esbuild.config.mjs --watch",
+    "test": "node tests/run.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
