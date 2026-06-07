@@ -1,0 +1,561 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popads.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popcash.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||exoclick.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 4,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||trafficjunky.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 5,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||juicyads.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 6,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsterra.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 7,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||propellerads.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 8,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hilltopads.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 9,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||bidvertiser.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||mgid.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||revcontent.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 12,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||taboola.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 13,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||outbrain.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 14,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||googlesyndication.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 15,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||doubleclick.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 16,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||googleadservices.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 17,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsafeprotected.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 18,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pupupul.site^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 19,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||clkme.me^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 20,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adspyglass.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 21,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cdn.adnxs.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 22,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*ad.php*",
+      "initiatorDomains": ["webflix.lol"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 23,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||moonads.to^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 24,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||moonadsq.to^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 25,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||clickaine.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 26,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tsyndicate.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 27,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||creativecdn.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 28,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||smartadserver.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 29,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adbull.me^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 30,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||sheety.co^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 31,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||miniroad.store^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket", "main_frame"]
+    }
+  },
+  {
+    "id": 32,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cf.miniroad.store^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket", "main_frame"]
+    }
+  },
+  {
+    "id": 33,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*middle.html*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 34,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||stake.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 35,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||playafterdark.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 36,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||realsrv.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 37,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ouo.io^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 38,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||rtmark.net^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 39,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||jucyadsnew.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 40,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ero-advertising.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 41,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.us^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 42,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.com^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 43,
+    "priority": 10,
+    "action": { "type": "allowAllRequests" },
+    "condition": {
+      "urlFilter": "||empire-streaming.net^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "comment": "Bloquer les ressources pub connues initialisées par Empire Streaming (scripts, images, iframes)",
+    "id": 44,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popads.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 45,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||exoclick.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 46,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tsyndicate.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 47,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||moonads.to^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 48,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||adsterra.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 49,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||propellerads.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 50,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||realsrv.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 51,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||juicyads.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 52,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||trafficjunky.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 53,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||creativecdn.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 54,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||miniroad.store^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 55,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||northseize.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 56,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||otieu.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "main_frame"]
+    }
+  },
+  {
+    "id": 57,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||clickaine.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 58,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||stake.com^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "main_frame"]
+    }
+  },
+  {
+    "id": 59,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hilltopads.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 60,
+    "priority": 15,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||popcash.net^",
+      "initiatorDomains": ["empire-streaming.us", "empire-streaming.com", "empire-streaming.net"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image"]
+    }
+  }
+]

@@ -1,7 +1,3 @@
-# Build output
-dist/
-*.zip
-
 # Dependencies
 node_modules/
 
@@ -20,3 +16,6 @@ tests/
 # Dev-only docs
 security.md
 .github/
+
+# ZIPs (les dossiers dist/ sont versionnés pour les users)
+dist/*.zip
