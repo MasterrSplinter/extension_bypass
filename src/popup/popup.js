@@ -1,13 +1,9 @@
 /**
- * popup.js — Webflix AdBlocker Pro v1.5
- * Réécriture complète — architecture robuste
+ * popup.js — Streaming AdBlocker Pro
  *
- * FIXES:
- *  ✅ Toggle ON/OFF délègue au SW via TOGGLE_PROTECTION + fallback direct
- *  ✅ Pas de setInterval — utilise chrome.storage.onChanged pour MAJ temps réel
- *  ✅ rulesCount dans la stat-card est mis à jour
- *  ✅ Lecture initiale de l'état via GET_STATS (inclut enabled depuis SW)
- *  ✅ Gestion robuste des erreurs (pas de crash silencieux)
+ * - Toggle ON/OFF délégué au SW (TOGGLE_PROTECTION) avec fallback direct
+ * - MAJ temps réel via chrome.storage.onChanged (pas de setInterval)
+ * - Lecture initiale de l'état via GET_STATS (inclut `enabled` depuis le SW)
  */
 
 'use strict';
@@ -26,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const notProtected   = document.getElementById('notProtected');
   const siteStatusText = document.getElementById('siteStatusText');
   const historyList    = document.getElementById('historyList');
-  const updateRulesBtn = document.getElementById('updateRulesBtn');
   const rulesInfo      = document.getElementById('rulesInfo');
   const addDomainBtn   = document.getElementById('addDomainBtn');
   const currentDomainLabel = document.getElementById('currentDomainLabel');
@@ -49,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch {}
 
     // Toujours lire le storage directement pour s'assurer de l'état actuel
-    const data = await chrome.storage.local.get(['enabled', 'blockedCount', 'blockedHistory', 'lastRulesUpdate', 'rulesCount']);
+    const data = await chrome.storage.local.get(['enabled', 'blockedCount', 'blockedHistory', 'rulesCount']);
     currentEnabled = data.enabled !== false;
 
     applyStorageData(data);
@@ -61,13 +56,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function applyStats(stats) {
     if (blockedCountEl) blockedCountEl.textContent = formatNumber(stats.blockedCount || 0);
-    if (rulesCountEl)   rulesCountEl.textContent   = String(stats.rulesCount || WFB_DEFAULT_RULES_COUNT);
-    if (rulesInfo) {
-      const lastUpdate = stats.lastRulesUpdate
-        ? new Date(stats.lastRulesUpdate).toLocaleDateString('fr-FR')
-        : 'jamais';
-      rulesInfo.textContent = `${stats.rulesCount || WFB_DEFAULT_RULES_COUNT} règles · MàJ : ${lastUpdate}`;
-    }
+    const rules = stats.rulesCount || WFB_DEFAULT_RULES_COUNT;
+    if (rulesCountEl) rulesCountEl.textContent = String(rules);
+    if (rulesInfo)    rulesInfo.textContent    = `${rules} règles actives`;
     renderHistory(stats.blockedHistory || {});
   }
 
@@ -78,12 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (blockedCountEl) blockedCountEl.textContent = formatNumber(count);
     if (rulesCountEl)   rulesCountEl.textContent   = String(rules);
-    if (rulesInfo) {
-      const lastUpdate = data.lastRulesUpdate
-        ? new Date(data.lastRulesUpdate).toLocaleDateString('fr-FR')
-        : 'jamais';
-      rulesInfo.textContent = `${rules} règles · MàJ : ${lastUpdate}`;
-    }
+    if (rulesInfo)      rulesInfo.textContent      = `${rules} règles actives`;
     renderHistory(history);
   }
 
@@ -101,11 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (changes.rulesCount) {
       const rules = changes.rulesCount.newValue || WFB_DEFAULT_RULES_COUNT;
       if (rulesCountEl) rulesCountEl.textContent = String(rules);
-    }
-    if (changes.lastRulesUpdate) {
-      const lastUpdate = new Date(changes.lastRulesUpdate.newValue).toLocaleDateString('fr-FR');
-      const rules = changes.rulesCount?.newValue || (rulesCountEl ? rulesCountEl.textContent : WFB_DEFAULT_RULES_COUNT);
-      if (rulesInfo) rulesInfo.textContent = `${rules} règles · MàJ : ${lastUpdate}`;
+      if (rulesInfo)    rulesInfo.textContent    = `${rules} règles actives`;
     }
     if (changes.enabled !== undefined) {
       const newEnabled = changes.enabled.newValue !== false;
@@ -167,26 +149,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (optionsBtn) {
     optionsBtn.addEventListener('click', () => {
       chrome.runtime.openOptionsPage();
-    });
-  }
-
-  // ─── Mettre à jour les règles ────────────────────────────────────────────────
-  if (updateRulesBtn) {
-    updateRulesBtn.addEventListener('click', async () => {
-      updateRulesBtn.textContent = '🔄 En cours...';
-      updateRulesBtn.disabled = true;
-      try {
-        const result = await sendMessageSafe({ type: 'UPDATE_RULES_NOW' });
-        if (result && result.rulesCount) {
-          if (rulesCountEl) rulesCountEl.textContent = String(result.rulesCount);
-        }
-        showToast('✅ Règles mises à jour !');
-      } catch {
-        showToast('⚠️ Règles locales conservées');
-      } finally {
-        updateRulesBtn.textContent = '🔄 Màj règles';
-        updateRulesBtn.disabled = false;
-      }
     });
   }
 

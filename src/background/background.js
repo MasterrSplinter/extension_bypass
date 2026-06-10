@@ -1,14 +1,12 @@
 /**
- * service_worker.js — Webflix AdBlocker Pro v1.5
- * Réécriture complète — architecture robuste
+ * background.js — Streaming AdBlocker Pro
+ * Service worker (Chrome) / event page (Firefox) — architecture robuste
  *
- * FIXES:
- *  ✅ Double listener onMessage supprimé (un seul handler)
- *  ✅ Cache en mémoire pour `enabled` (mis à jour par message)
- *  ✅ Heuristique timing corrigée (lastUserClickTime=0 = jamais cliqué)
- *  ✅ Alarmes créées sans doublons (clearAlarms avant)
- *  ✅ Badge mis à jour correctement
- *  ✅ rulesCount exposé dans GET_STATS
+ * Rôles :
+ *  - Cache mémoire de l'état `enabled` (mis à jour par message et storage)
+ *  - Fermeture des onglets/popups publicitaires (webNavigation + tabs.onUpdated)
+ *  - Heuristique timing reliée à l'onglet réellement cliqué
+ *  - Gestion des domaines personnalisés (registerContentScripts)
  */
 
 'use strict';
@@ -23,7 +21,6 @@ if (typeof WFB_AD_DOMAINS === 'undefined' && typeof importScripts === 'function'
 // CONFIGURATION
 // ══════════════════════════════════════════════════════════════
 
-const REMOTE_RULES_URL = 'https://raw.githubusercontent.com/webflix-adblocker/rules/main/rules.json';
 const HEURISTIC_WINDOW_MS = 800;
 const BADGE_COLOR = '#7c3aed';
 
@@ -41,8 +38,8 @@ const PLAYER_SOURCE_PATTERNS = WFB_PLAYER_SOURCE_PATTERNS;
 // ══════════════════════════════════════════════════════════════
 
 let _enabledCache = true;        // Cache de l'état ON/OFF
-let _enabledCacheReady = false;  // Indique si le cache a été initialisé
 let lastUserClickTime = 0;       // Timestamp du dernier clic utilisateur (0 = jamais)
+let lastUserClickTabId = -1;     // Onglet d'où provient ce clic (USER_CLICK ne vient que des sites protégés)
 let _customDomainsCache = [];    // Cache des domaines custom ajoutés
 
 // Charger l'état initial depuis le storage au démarrage du SW
@@ -50,7 +47,6 @@ async function initCache() {
   const data = await chrome.storage.local.get(['enabled', 'custom_domains']);
   _enabledCache = data.enabled !== false;
   _customDomainsCache = data.custom_domains || [];
-  _enabledCacheReady = true;
   console.log(`[StreamBlocker/SW] Cache initialisé: enabled=${_enabledCache}, custom=${_customDomainsCache.length}`);
   if (_customDomainsCache.length > 0) {
     registerCustomDomains(_customDomainsCache);
@@ -121,20 +117,13 @@ async function updateBadge() {
   try {
     const data = await chrome.storage.local.get(['blockedCount']);
     const count = data.blockedCount || 0;
-    const text = count > 0 ? String(count) : '';
-    const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      try {
-        if (!isEnabled()) {
-          await chrome.action.setBadgeText({ text: '', tabId: tab.id });
-        } else {
-          await chrome.action.setBadgeText({ text, tabId: tab.id });
-          if (count > 0) {
-            await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR, tabId: tab.id });
-          }
-        }
-      } catch {}
+    // Badge global (sans tabId) : O(1) au lieu d'un parcours de tous les onglets.
+    if (!isEnabled() || count === 0) {
+      await chrome.action.setBadgeText({ text: '' });
+      return;
     }
+    await chrome.action.setBadgeText({ text: String(count) });
+    await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR });
   } catch {}
 }
 
@@ -170,9 +159,6 @@ async function setupAlarms() {
   if (!names.includes('keepAlive')) {
     chrome.alarms.create('keepAlive', { periodInMinutes: 0.4 });
   }
-  if (!names.includes('updateRules')) {
-    chrome.alarms.create('updateRules', { periodInMinutes: 1440 });
-  }
 }
 setupAlarms();
 
@@ -181,44 +167,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     // Ping minimal — maintient le SW actif et rafraîchit le cache
     const data = await chrome.storage.local.get(['enabled']);
     _enabledCache = data.enabled !== false;
-  }
-  if (alarm.name === 'updateRules') {
-    await fetchAndUpdateRules();
-  }
-});
-
-// ══════════════════════════════════════════════════════════════
-// RÈGLES DISTANTES
-// ══════════════════════════════════════════════════════════════
-
-async function fetchAndUpdateRules() {
-  console.log('[StreamBlocker/SW] 🔄 Tentative MàJ règles distantes...');
-  try {
-    const response = await fetch(REMOTE_RULES_URL, { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const remoteRules = await response.json();
-    if (!Array.isArray(remoteRules) || remoteRules.length === 0) throw new Error('Format invalide');
-
-    const existing = await chrome.declarativeNetRequest.getDynamicRules();
-    const existingIds = existing.map(r => r.id);
-    const numberedRules = remoteRules.map((rule, i) => ({ ...rule, id: 1000 + i }));
-
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: existingIds,
-      addRules: numberedRules
-    });
-    await chrome.storage.local.set({ lastRulesUpdate: Date.now(), rulesCount: numberedRules.length });
-    console.log(`[StreamBlocker/SW] ✅ ${numberedRules.length} règles chargées`);
-  } catch (err) {
-    console.warn('[StreamBlocker/SW] ⚠️ Règles distantes non disponibles:', err.message);
-  }
-}
-
-// MàJ au démarrage si nécessaire (sans bloquer le SW)
-chrome.storage.local.get(['lastRulesUpdate']).then(data => {
-  const oneDayAgo = Date.now() - 86400000;
-  if (!data.lastRulesUpdate || data.lastRulesUpdate < oneDayAgo) {
-    fetchAndUpdateRules();
   }
 });
 
@@ -246,7 +194,7 @@ async function registerCustomDomains(domains) {
         {
           id: 'custom_streaming_isolated',
           matches: matches,
-          js: ['content/content.js'],
+          js: ['shared/blocklists.js', 'content/content.js'],
           css: ['content/content.css'],
           runAt: 'document_start',
           allFrames: false
@@ -304,9 +252,13 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async (details) => {
     } catch {}
   }
 
-  // Heuristique timing : ouvert dans les 800ms d'un clic utilisateur
-  // IMPORTANT: lastUserClickTime=0 signifie "jamais cliqué", pas "clic il y a 0ms"
-  if (lastUserClickTime > 0) {
+  // Heuristique timing : popup ouvert dans les 800ms d'un clic utilisateur.
+  // Restreinte à l'onglet réellement cliqué (sourceTabId == onglet du dernier
+  // USER_CLICK), qui provient forcément d'un site protégé puisque les content
+  // scripts ne s'exécutent que là. Évite de fermer des onglets légitimes
+  // ouverts depuis d'autres pages dans la même fenêtre temporelle.
+  // NB: lastUserClickTime=0 signifie "jamais cliqué", pas "clic il y a 0ms".
+  if (lastUserClickTime > 0 && details.sourceTabId === lastUserClickTabId) {
     const timeSinceClick = Date.now() - lastUserClickTime;
     if (timeSinceClick >= 0 && timeSinceClick < HEURISTIC_WINDOW_MS) {
       console.log(`[StreamBlocker/SW] 🚫 Heuristique (${timeSinceClick}ms): ${hostname}`);
@@ -351,22 +303,21 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const type = message.type;
 
-  // ── USER_CLICK : horodater le clic ────────────────────────
+  // ── USER_CLICK : horodater le clic + mémoriser l'onglet source ──
   if (type === 'USER_CLICK') {
     lastUserClickTime = Date.now();
-    // Pas de sendResponse nécessaire, réponse synchrone
+    lastUserClickTabId = (sender && sender.tab) ? sender.tab.id : -1;
     sendResponse({ ok: true });
     return false;
   }
 
   // ── GET_STATS : statistiques complètes ────────────────────
   if (type === 'GET_STATS') {
-    chrome.storage.local.get(['blockedCount', 'blockedHistory', 'lastRulesUpdate', 'rulesCount'])
+    chrome.storage.local.get(['blockedCount', 'blockedHistory', 'rulesCount'])
       .then(data => {
         sendResponse({
           blockedCount:    data.blockedCount    || 0,
           blockedHistory:  data.blockedHistory  || {},
-          lastRulesUpdate: data.lastRulesUpdate || null,
           rulesCount:      data.rulesCount      || WFB_DEFAULT_RULES_COUNT,
           enabled:         _enabledCache
         });
@@ -405,15 +356,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.set({ blockedCount: 0, blockedHistory: {} }).then(async () => {
       await updateBadge();
       sendResponse({ ok: true });
-    });
-    return true; // Async
-  }
-
-  // ── UPDATE_RULES_NOW : forcer la MàJ des règles ────────────
-  if (type === 'UPDATE_RULES_NOW') {
-    fetchAndUpdateRules().then(async () => {
-      const data = await chrome.storage.local.get(['rulesCount', 'lastRulesUpdate']);
-      sendResponse({ ok: true, rulesCount: data.rulesCount || WFB_DEFAULT_RULES_COUNT, lastRulesUpdate: data.lastRulesUpdate });
     });
     return true; // Async
   }
@@ -471,4 +413,4 @@ chrome.runtime.onInstalled.addListener(async () => {
 // Badge initial
 updateBadge();
 
-console.log('[StreamBlocker/SW] ✅ v1.5 démarré — Architecture robuste');
+console.log('[StreamBlocker/SW] ✅ Démarré — Streaming AdBlocker Pro');

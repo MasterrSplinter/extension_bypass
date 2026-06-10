@@ -1,6 +1,6 @@
 /**
  * content.js — Script injecté (ISOLATED WORLD) sur les sites de streaming
- * v1.5 — Gère l'état enabled et le communique au MAIN WORLD via CustomEvent
+ * Gère l'état `enabled` et le communique au MAIN WORLD via CustomEvent.
  *
  * RÔLE PRINCIPAL :
  *  1. Lire l'état `enabled` depuis chrome.storage
@@ -166,12 +166,22 @@
     });
   }
 
+  // Un élément ne ressemble à une modale anti-adblock que s'il a aussi une
+  // structure suspecte (overlay positionné/superposé OU id/classe explicite).
+  // Évite de supprimer du contenu légitime qui mentionne simplement « whitelist ».
+  function looksLikeAntiAdblockModal(el) {
+    const hint = `${el.id || ''} ${el.className || ''}`.toLowerCase();
+    if (/adblock|ad-block|blocker|disable|overlay|modal|popup/.test(hint)) return true;
+    const s = window.getComputedStyle(el);
+    return (s.position === 'fixed' || s.position === 'absolute') && parseInt(s.zIndex, 10) > 500;
+  }
+
   function removeAntiAdblockMessages() {
     if (!protectionEnabled) return;
-    const keywords = ['adblock', 'adblocker', 'désactiver votre bloqueur', 'disable your ad', 'whitelist'];
+    const keywords = ['adblock', 'adblocker', 'désactiver votre bloqueur', 'disable your ad'];
     document.querySelectorAll('div, section, aside, p').forEach(el => {
       const text = el.textContent.toLowerCase();
-      if (keywords.some(k => text.includes(k)) && el.children.length < 5) {
+      if (keywords.some(k => text.includes(k)) && el.children.length < 5 && looksLikeAntiAdblockModal(el)) {
         el.remove();
         console.log('[StreamBlocker] Message anti-adblock supprimé');
       }

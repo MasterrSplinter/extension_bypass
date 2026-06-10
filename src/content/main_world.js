@@ -1,6 +1,6 @@
 /**
  * main_world.js — Injecté dans le MAIN WORLD (world: "MAIN")
- * v1.6 — Anti-détection Cloudflare + respecte window.__WFB_ENABLED
+ * Anti-détection Cloudflare + respecte window.__WFB_ENABLED.
  *
  * IMPORTANT: Ce script s'exécute dans le MAIN WORLD.
  * Il lit window.__WFB_ENABLED pour savoir si la protection est active.
@@ -92,7 +92,7 @@
     return _nativeClick.call(this);
   }, _nativeClick);
 
-  // NOTE: document.createElement override supprimé (v1.6) — détectable par Cloudflare.
+  // NOTE: l'override de document.createElement a été retiré — détectable par Cloudflare.
 
   // ══════════════════════════════════════════════════════════════════
   // SECTION D : Bypass de l'overlay WWEMBED (wavewatch.top)
@@ -333,7 +333,12 @@
   // ══════════════════════════════════════════════════════════════════
   // SECTION H : Observer les mutations DOM
   // ══════════════════════════════════════════════════════════════════
-  const observer = new MutationObserver(() => {
+  // Le scan (notamment hideAdOverlays, qui balaie le DOM) est coûteux ; on le
+  // coalesce à au plus une exécution par frame via requestAnimationFrame plutôt
+  // que de le lancer à chaque mutation (évite le layout thrashing).
+  let _scanScheduled = false;
+
+  function runScan() {
     if (!window.__WFB_ENABLED) return;
     if (!wwembedBypassed && location.hostname.includes('wavewatch')) {
       bypassWWEMBED();
@@ -346,7 +351,18 @@
       bypassGenericStepOverlay();
       hideAdOverlays();
     }
-  });
+  }
+
+  function scheduleScan() {
+    if (_scanScheduled) return;
+    _scanScheduled = true;
+    requestAnimationFrame(() => {
+      _scanScheduled = false;
+      runScan();
+    });
+  }
+
+  const observer = new MutationObserver(scheduleScan);
 
   observer.observe(document.documentElement, {
     childList: true, subtree: true,
