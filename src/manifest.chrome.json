@@ -52,6 +52,7 @@
       ],
       "js": [
         "shared/blocklists.js",
+        "shared/matchers.js",
         "content/content.js"
       ],
       "css": [

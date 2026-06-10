@@ -11,10 +11,10 @@
 
 'use strict';
 
-// Charger les listes partagées. Chrome (vrai service worker) → importScripts ;
+// Charger les modules partagés. Chrome (vrai service worker) → importScripts ;
 // Firefox (event page) les reçoit déjà via le tableau `scripts` du manifest.
 if (typeof WFB_AD_DOMAINS === 'undefined' && typeof importScripts === 'function') {
-  importScripts('/shared/blocklists.js');
+  importScripts('/shared/blocklists.js', '/shared/matchers.js');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -74,39 +74,30 @@ function isEnabled() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// UTILITAIRES
+// UTILITAIRES (prédicats : shared/matchers.js)
 // ══════════════════════════════════════════════════════════════
 
-function normalizeHost(h) {
-  return (h || '').toLowerCase().replace(/^www\./, '');
-}
-
 function isAdHostname(hostname) {
-  const h = normalizeHost(hostname);
-  if (!h) return false;
-  return AD_DOMAINS.some(d => h === d || h.endsWith('.' + d));
+  return WFB_hostInList(hostname, AD_DOMAINS);
 }
 
 function isWhitelistedHostname(hostname) {
-  const h = normalizeHost(hostname);
-  if (!h) return true;
-  return WHITELIST_DOMAINS.some(d => h === d || h.endsWith('.' + d));
+  // hostname vide → considéré comme whitelisté (ne rien fermer).
+  if (!WFB_normalizeHost(hostname)) return true;
+  return WFB_hostInList(hostname, WHITELIST_DOMAINS);
 }
 
 function isPlayerSource(hostname) {
-  const h = normalizeHost(hostname);
-  return PLAYER_SOURCE_PATTERNS.some(p => h.includes(p));
+  return WFB_patternInHost(hostname, PLAYER_SOURCE_PATTERNS);
 }
 
 function isStreamingSiteSource(hostname) {
-  const h = normalizeHost(hostname);
-  return STREAMING_SITES.some(d => h === d || h.endsWith('.' + d)) || 
-         _customDomainsCache.some(d => h === d || h.endsWith('.' + d));
+  return WFB_hostInList(hostname, STREAMING_SITES) ||
+         WFB_hostInList(hostname, _customDomainsCache);
 }
 
 function getHostname(url) {
-  if (!url || url === 'about:blank' || url === '' || url.startsWith('chrome')) return null;
-  try { return new URL(url).hostname; } catch { return null; }
+  return WFB_hostnameFromUrl(url);
 }
 
 async function safeCloseTab(tabId) {
@@ -194,7 +185,7 @@ async function registerCustomDomains(domains) {
         {
           id: 'custom_streaming_isolated',
           matches: matches,
-          js: ['shared/blocklists.js', 'content/content.js'],
+          js: ['shared/blocklists.js', 'shared/matchers.js', 'content/content.js'],
           css: ['content/content.css'],
           runAt: 'document_start',
           allFrames: false

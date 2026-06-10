@@ -332,22 +332,15 @@
   }, { capture: true, passive: true });
 
   // ══════════════════════════════════════════════════════════════════
-  // UTILITAIRES (listes : shared/blocklists.js, chargé avant content.js)
+  // UTILITAIRES (listes : shared/blocklists.js ; prédicats : shared/matchers.js)
   // ══════════════════════════════════════════════════════════════════
-  const AD_DOMAINS = WFB_AD_DOMAINS;
-  const WHITELIST_DOMAINS = WFB_CLICK_WHITELIST;
-
   function isAdUrl(url) {
-    if (!url || typeof url !== 'string') return false;
-    try {
-      const u = new URL(url, window.location.href);
-      return AD_DOMAINS.some(d => u.hostname === d || u.hostname.endsWith('.' + d));
-    } catch { return false; }
+    const host = WFB_hostnameFromUrl(url, window.location.href);
+    return host ? WFB_hostInList(host, WFB_AD_DOMAINS) : false;
   }
 
   function isWhitelisted(hostname) {
-    if (!hostname) return false;
-    return WHITELIST_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
+    return WFB_hostInList(hostname, WFB_CLICK_WHITELIST);
   }
 
   // ══════════════════════════════════════════════════════════════════

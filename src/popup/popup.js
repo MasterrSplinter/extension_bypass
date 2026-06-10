@@ -165,8 +165,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await chrome.storage.local.get(['custom_domains']);
       const customDomains = data.custom_domains || [];
 
-      const isProtected = STREAMING_SITES.some(d => hostname === d || hostname.endsWith('.' + d)) || 
-                          customDomains.some(d => hostname === d || hostname.endsWith('.' + d));
+      const isProtected = WFB_hostInList(hostname, STREAMING_SITES) ||
+                          WFB_hostInList(hostname, customDomains);
 
       if (isProtected) {
         if (siteInfo)    siteInfo.style.display    = 'flex';
@@ -250,21 +250,45 @@ document.addEventListener('DOMContentLoaded', async () => {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
+    historyList.replaceChildren();
+
     if (entries.length === 0) {
-      historyList.innerHTML = '<div class="history-empty">Aucun domaine bloqué pour l\'instant</div>';
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = 'Aucun domaine bloqué pour l\'instant';
+      historyList.appendChild(empty);
       return;
     }
 
+    // Construction via DOM (pas d'innerHTML) : les noms de domaine viennent de
+    // sources externes, on évite toute interprétation HTML.
     const max = entries[0][1];
-    historyList.innerHTML = entries.map(([domain, count]) => {
+    for (const [domain, count] of entries) {
       const pct = Math.round((count / max) * 100);
       const shortDomain = domain.length > 24 ? domain.slice(0, 22) + '…' : domain;
-      return `<div class="history-item">
-        <span class="history-domain" title="${domain}">${shortDomain}</span>
-        <div class="history-bar-wrap"><div class="history-bar" style="width:${pct}%"></div></div>
-        <span class="history-count">${count}</span>
-      </div>`;
-    }).join('');
+
+      const item = document.createElement('div');
+      item.className = 'history-item';
+
+      const name = document.createElement('span');
+      name.className = 'history-domain';
+      name.title = domain;
+      name.textContent = shortDomain;
+
+      const barWrap = document.createElement('div');
+      barWrap.className = 'history-bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'history-bar';
+      bar.style.width = `${pct}%`;
+      barWrap.appendChild(bar);
+
+      const countEl = document.createElement('span');
+      countEl.className = 'history-count';
+      countEl.textContent = String(count);
+
+      item.append(name, barWrap, countEl);
+      historyList.appendChild(item);
+    }
   }
 
   function showToast(message) {

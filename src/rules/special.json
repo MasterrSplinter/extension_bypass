@@ -1,0 +1,71 @@
+[
+  {
+    "_comment": "Scripts ad.php propres à Webflix",
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*ad.php*",
+      "initiatorDomains": ["webflix.lol"],
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "_comment": "miniroad.store — escalade main_frame",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||miniroad.store^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket", "main_frame"]
+    }
+  },
+  {
+    "_comment": "cf.miniroad.store — escalade main_frame",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cf.miniroad.store^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "image", "media", "websocket", "main_frame"]
+    }
+  },
+  {
+    "_comment": "Interstitiels middle.html — restreints aux sites streaming",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*middle.html*",
+      "initiatorDomains": [
+        "webflix.lol", "senpai-stream.quest", "french-stream.ac", "frenchstream.wtf",
+        "papystreaming.tv", "voiranime.com", "filmcomplet.link", "streamcomplet.app",
+        "wiflix.st", "cpasmieux.com", "zone-telechargement.beauty"
+      ],
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "_comment": "stake.com — escalade main_frame",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||stake.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "_comment": "playafterdark.com — escalade main_frame",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||playafterdark.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "_comment": "ouo.io — raccourcisseur/redirect interstitiel",
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ouo.io^",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  }
+]
