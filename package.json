@@ -1,0 +1,19 @@
+{
+  "name": "streaming-adblocker-pro",
+  "version": "1.6.0",
+  "description": "Bloqueur de publicités et popups spécialisé pour les sites de streaming.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint \"src/**/*.js\"",
+    "validate:manifests": "node scripts/validate-manifests.mjs",
+    "check": "npm run validate:manifests && npm run lint",
+    "build": "bash build.sh"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0"
+  }
+}

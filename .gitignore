@@ -3,3 +3,4 @@ dist/
 chrome/ChromeProfile/
 firefox/webflix-adblocker.xpi
 *.log
+node_modules/
