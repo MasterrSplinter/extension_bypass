@@ -88,6 +88,18 @@ for (const site of SITES) {
   });
 }
 
+// ── 1b. Faux positifs : l'UI légitime « overlay/modal » n'est PAS supprimée ──
+test('ne supprime pas l’UI légitime overlay/modal (anti faux positif)', async () => {
+  const page = await context.newPage();
+  await page.goto('https://empire-streaming.us/', { waitUntil: 'load' });
+  // La vraie pub disparaît…
+  await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 6000 });
+  // …mais les éléments légitimes (classe overlay-/modal-, non publicitaires) restent.
+  await expect(page.locator('#legit-overlay')).toHaveCount(1);
+  await expect(page.locator('#legit-modal')).toHaveCount(1);
+  await page.close();
+});
+
 // ── 2. Scoping : aucune injection sur un hôte non protégé ───────────────────
 test('n’injecte PAS sur un hôte non protégé', async () => {
   const page = await context.newPage();

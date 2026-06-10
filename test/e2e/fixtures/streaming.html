@@ -13,6 +13,11 @@
   <!-- Lien _blank vers une régie pub : doit être neutralisé -->
   <a id="ad-link" href="https://popads.net/landing" target="_blank">Télécharger</a>
 
+  <!-- UI légitime utilisant « overlay »/« modal » dans la classe (cas empire-streaming) :
+       NE DOIT PAS être supprimée (faux positifs) -->
+  <div id="legit-overlay" class="overlay-left">dégradé de vignette</div>
+  <div id="legit-modal" class="modal-txt">+ d'info</div>
+
   <!-- Lecteur légitime : NE DOIT PAS être supprimé -->
   <div id="player-container">
     <video id="real-video" width="320" height="180"></video>
