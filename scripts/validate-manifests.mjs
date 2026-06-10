@@ -9,11 +9,19 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = resolve(root, 'src');
 let errors = 0;
 const fail = (msg) => { console.error(`  ✗ ${msg}`); errors++; };
+
+// Charge les listes partagées (script classique) pour vérifier la cohérence.
+function loadBlocklists() {
+  const ctx = vm.createContext({ URL, console });
+  vm.runInContext(readFileSync(resolve(SRC, 'shared/blocklists.js'), 'utf8'), ctx);
+  return ctx;
+}
 
 function readJson(path) {
   try {
@@ -38,6 +46,20 @@ function collectReferencedFiles(manifest) {
   return files;
 }
 
+// Tous les patterns de matches des content_scripts, à plat.
+function collectMatchPatterns(manifest) {
+  const patterns = [];
+  for (const cs of manifest.content_scripts || []) patterns.push(...(cs.matches || []));
+  return patterns;
+}
+
+// Un domaine est couvert s'il existe un pattern `*://*.<domaine>/*`.
+function domainIsMatched(domain, patterns) {
+  return patterns.includes(`*://*.${domain}/*`);
+}
+
+const lists = loadBlocklists();
+
 for (const name of ['manifest.chrome.json', 'manifest.firefox.json']) {
   console.log(`• ${name}`);
   const manifest = readJson(resolve(SRC, name));
@@ -47,6 +69,13 @@ for (const name of ['manifest.chrome.json', 'manifest.firefox.json']) {
   }
   for (const ref of collectReferencedFiles(manifest)) {
     if (!existsSync(resolve(SRC, ref))) fail(`${name}: fichier référencé introuvable « ${ref} »`);
+  }
+  // Chaque site de streaming protégé doit être injecté par un content_script.
+  const patterns = collectMatchPatterns(manifest);
+  for (const domain of lists.WFB_STREAMING_SITES || []) {
+    if (!domainIsMatched(domain, patterns)) {
+      fail(`${name}: « ${domain} » est dans WFB_STREAMING_SITES mais absent des content_scripts.matches`);
+    }
   }
 }
 

@@ -11,12 +11,14 @@
     "check:rules": "node scripts/gen-rules.mjs --check",
     "validate:manifests": "node scripts/validate-manifests.mjs",
     "lint:webext": "web-ext lint --source-dir dist/firefox --warnings-as-errors=false",
+    "test:e2e": "playwright test",
     "check": "npm run check:rules && npm run validate:manifests && npm run lint && npm run test",
     "build": "npm run gen:rules && bash build.sh"
   },
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@playwright/test": "^1.60.0",
     "eslint": "^9.13.0",
     "globals": "^15.11.0",
     "vitest": "^4.1.8",

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Fixture streaming</title>
+</head>
+<body>
+  <h1>Fixture de test</h1>
+
+  <!-- Pub qui DOIT être supprimée par content.js (matche div[id*="popup"] / div[class*="popup"]) -->
+  <div id="popup-overlay" class="popup ad-banner">PUBLICITÉ INTRUSIVE</div>
+
+  <!-- Lien _blank vers une régie pub : doit être neutralisé -->
+  <a id="ad-link" href="https://popads.net/landing" target="_blank">Télécharger</a>
+
+  <!-- Lecteur légitime : NE DOIT PAS être supprimé -->
+  <div id="player-container">
+    <video id="real-video" width="320" height="180"></video>
+  </div>
+
+  <!-- Déclencheur de popup via window.open (intercepté par main_world.js) -->
+  <button id="open-popup" onclick="window.__openResult = window.open('https://popads.net/popup', '_blank');">
+    Ouvrir
+  </button>
+
+  <p id="marker">contenu légitime</p>
+</body>
+</html>

@@ -4,3 +4,7 @@ chrome/ChromeProfile/
 firefox/webflix-adblocker.xpi
 *.log
 node_modules/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
