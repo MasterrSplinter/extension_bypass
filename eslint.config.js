@@ -1,14 +1,19 @@
 import js from '@eslint/js';
 import globals from 'globals';
 
-// Globales partagées par shared/blocklists.js (injectées dans tous les contextes)
+// Globales partagées par shared/blocklists.js et shared/matchers.js
+// (injectées dans tous les contextes via le manifest / importScripts).
 const wfbGlobals = {
   WFB_AD_DOMAINS: 'readonly',
   WFB_STREAMING_SITES: 'readonly',
   WFB_NAV_WHITELIST: 'readonly',
   WFB_CLICK_WHITELIST: 'readonly',
   WFB_PLAYER_SOURCE_PATTERNS: 'readonly',
-  WFB_DEFAULT_RULES_COUNT: 'readonly'
+  WFB_DEFAULT_RULES_COUNT: 'readonly',
+  WFB_normalizeHost: 'readonly',
+  WFB_hostInList: 'readonly',
+  WFB_patternInHost: 'readonly',
+  WFB_hostnameFromUrl: 'readonly'
 };
 
 export default [
@@ -30,15 +35,15 @@ export default [
     }
   },
   {
-    // Les consommateurs lisent les listes comme des globales ; le fichier qui les
-    // définit (blocklists.js) est exclu pour éviter no-redeclare / no-unused-vars.
+    // Les consommateurs lisent les globales partagées ; les fichiers qui les
+    // définissent sont exclus pour éviter no-redeclare / no-unused-vars.
     files: ['src/**/*.js'],
-    ignores: ['src/shared/blocklists.js'],
+    ignores: ['src/shared/blocklists.js', 'src/shared/matchers.js'],
     languageOptions: { globals: wfbGlobals }
   },
   {
-    // blocklists.js déclare des globales consommées ailleurs : ne pas les marquer inutilisées.
-    files: ['src/shared/blocklists.js'],
+    // Ces fichiers déclarent des globales consommées ailleurs : ne pas les marquer inutilisées.
+    files: ['src/shared/blocklists.js', 'src/shared/matchers.js'],
     rules: { 'no-unused-vars': 'off' }
   }
 ];

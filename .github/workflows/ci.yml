@@ -19,19 +19,20 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
+      - name: Vérifier que rules.json est à jour (généré depuis blocklists)
+        run: npm run check:rules
+
       - name: Valider les manifests et les règles DNR
         run: npm run validate:manifests
 
       - name: Lint (ESLint)
         run: npm run lint
 
-      - name: Vérifier la syntaxe des scripts
-        run: node --check src/background/background.js
-          && node --check src/content/content.js
-          && node --check src/content/main_world.js
-          && node --check src/popup/popup.js
-          && node --check src/options/options.js
-          && node --check src/shared/blocklists.js
+      - name: Tests unitaires (Vitest)
+        run: npm test
 
-      - name: Build de vérification
-        run: bash build.sh
+      - name: Build (Chrome + Firefox)
+        run: npm run build
+
+      - name: Lint web-ext (build Firefox)
+        run: npm run lint:webext

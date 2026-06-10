@@ -89,4 +89,4 @@ var WFB_PLAYER_SOURCE_PATTERNS = [
 ];
 
 // Nombre de règles statiques embarquées (rules/rules.json) — défaut d'affichage.
-var WFB_DEFAULT_RULES_COUNT = 40;
+var WFB_DEFAULT_RULES_COUNT = 62;

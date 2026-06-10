@@ -6,14 +6,20 @@
   "type": "module",
   "scripts": {
     "lint": "eslint \"src/**/*.js\"",
+    "test": "vitest run",
+    "gen:rules": "node scripts/gen-rules.mjs",
+    "check:rules": "node scripts/gen-rules.mjs --check",
     "validate:manifests": "node scripts/validate-manifests.mjs",
-    "check": "npm run validate:manifests && npm run lint",
-    "build": "bash build.sh"
+    "lint:webext": "web-ext lint --source-dir dist/firefox --warnings-as-errors=false",
+    "check": "npm run check:rules && npm run validate:manifests && npm run lint && npm run test",
+    "build": "npm run gen:rules && bash build.sh"
   },
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "eslint": "^9.13.0",
-    "globals": "^15.11.0"
+    "globals": "^15.11.0",
+    "vitest": "^4.1.8",
+    "web-ext": "^10.3.0"
   }
 }
