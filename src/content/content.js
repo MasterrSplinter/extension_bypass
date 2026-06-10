@@ -104,6 +104,7 @@
           e.preventDefault();
           e.stopImmediatePropagation();
           console.log('[StreamBlocker] Lien _blank bloqué :', href);
+          reportBlocked(u.hostname);
           return;
         }
       } catch {}
@@ -288,6 +289,7 @@
             e.preventDefault();
             e.stopImmediatePropagation();
             console.log('[StreamBlocker] Clic pub bloqué vers :', target.href);
+            reportBlocked(WFB_hostnameFromUrl(target.href));
             return;
         }
     }
@@ -364,6 +366,17 @@
       chrome.runtime.sendMessage({ type: 'USER_CLICK' });
     } catch {}
   }, { capture: true, passive: true });
+
+  // Relais des blocages du MAIN world (window.open, location.assign/replace…)
+  // vers le SW pour alimenter le compteur.
+  window.addEventListener('__wfb_blocked__', (e) => {
+    reportBlocked(e && e.detail ? e.detail : null);
+  }, { capture: true });
+
+  // Signale un blocage au service worker (incrémente le compteur, par lots côté SW).
+  function reportBlocked(host) {
+    try { chrome.runtime.sendMessage({ type: 'BLOCKED', host: host || null }); } catch {}
+  }
 
   // ══════════════════════════════════════════════════════════════════
   // UTILITAIRES (listes : shared/blocklists.js ; prédicats : shared/matchers.js)

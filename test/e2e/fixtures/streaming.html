@@ -13,6 +13,10 @@
   <!-- Lien _blank vers une régie pub : doit être neutralisé -->
   <a id="ad-link" href="https://popads.net/landing" target="_blank">Télécharger</a>
 
+  <!-- Lien _blank vers un hôte tiers NON listé (cas réel ey43.com) : bloqué au clic
+       par content.js → doit incrémenter le compteur -->
+  <a id="popup-link" href="https://ad-tracker.example/redir" target="_blank">Continuer</a>
+
   <!-- UI légitime utilisant « overlay »/« modal » dans la classe (cas empire-streaming) :
        NE DOIT PAS être supprimée (faux positifs) -->
   <div id="legit-overlay" class="overlay-left">dégradé de vignette</div>

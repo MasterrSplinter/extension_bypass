@@ -41,6 +41,7 @@ const BRAND_TLD_HOSTS = ['senpai-stream.monster', 'senpai-stream.brandnewtld', '
 const TEST_HOSTS = new Set([...SITES, ...BRAND_TLD_HOSTS, UNPROTECTED]);
 
 let context;
+let extId;
 
 test.beforeAll(async () => {
   context = await chromium.launchPersistentContext('', {
@@ -52,9 +53,15 @@ test.beforeAll(async () => {
     ]
   });
 
-  // Sert la fixture adaptée pour nos hôtes de test ; laisse tout le reste passer
-  // (ressources de l'extension, etc.).
-  await context.route('**/*', (route) => {
+  // ID de l'extension (depuis le service worker) pour lire chrome.storage via une
+  // page d'extension stable dans les tests.
+  let [sw] = context.serviceWorkers();
+  if (!sw) sw = await context.waitForEvent('serviceworker', { timeout: 8000 });
+  extId = new URL(sw.url()).host;
+
+  // Sert la fixture adaptée pour nos hôtes de test ; n'intercepte que le HTTP(S)
+  // (les pages chrome-extension:// doivent se charger sans interception).
+  await context.route(/^https?:\/\//, (route) => {
     let url;
     try { url = new URL(route.request().url()); } catch { return route.continue(); }
     if (!TEST_HOSTS.has(url.hostname)) return route.continue();
@@ -126,6 +133,30 @@ test('n’injecte PAS sur un hôte non protégé', async () => {
   await page.waitForTimeout(1500);
   await expect(page.locator('#popup-overlay')).toHaveCount(1);
   await page.close();
+});
+
+// ── 2b. Le compteur s'incrémente quand un popup/_blank pub est bloqué ───────
+test('incrémente le compteur de blocages (content → SW)', async () => {
+  // Lit blockedCount via une page d'options éphémère (chrome.storage stable).
+  async function readCount() {
+    const ext = await context.newPage();
+    try {
+      await ext.goto(`chrome-extension://${extId}/options/options.html`, { waitUntil: 'domcontentloaded' });
+      return await ext.evaluate(async () => (await chrome.storage.local.get('blockedCount')).blockedCount || 0);
+    } finally { await ext.close(); }
+  }
+
+  const page = await context.newPage();
+  await page.goto('https://french-stream.ac/', { waitUntil: 'load' });
+  await page.waitForTimeout(500); // laisser les listeners s'attacher
+  const before = await readCount();
+
+  // Clic sur un lien _blank (hôte non listé) → bloqué par content.js → signalé au SW.
+  await page.locator('#popup-link').click({ force: true }).catch(() => {});
+  await page.waitForTimeout(1200); // laisser le SW agréger puis écrire (lot ~800ms)
+  await page.close();              // fermer l'onglet avant de lire via la page d'options
+
+  await expect.poll(readCount, { timeout: 8000 }).toBeGreaterThan(before);
 });
 
 // ── 3. main_world : un overlay géant pub est retiré ─────────────────────────
