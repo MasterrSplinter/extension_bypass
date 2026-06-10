@@ -38,6 +38,13 @@
     console.log('[StreamBlocker/MAIN] État protection mis à jour :', window.__WFB_ENABLED);
   }, { capture: true });
 
+  // Signale un blocage à content.js (ISOLATED), qui le relaie au SW (compteur).
+  function reportBlocked(url) {
+    let host = '';
+    try { host = new URL(url, location.href).hostname; } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent('__wfb_blocked__', { detail: host || (url || '') })); } catch (e) {}
+  }
+
   // ══════════════════════════════════════════════════════════════════
   // SECTION A : Faux window.open
   // ══════════════════════════════════════════════════════════════════
@@ -49,6 +56,7 @@
     }
 
     console.log('[StreamBlocker/MAIN] window.open intercepté :', url);
+    reportBlocked(url);
 
     const fakeWin = {
       closed:    false,
@@ -350,6 +358,7 @@
     window.location.assign = function (url) {
       if (window.__WFB_ENABLED && isAdUrl(url)) {
         console.log('[StreamBlocker/MAIN] location.assign bloqué :', url);
+        reportBlocked(url);
         return;
       }
       return _origAssign(url);
@@ -358,6 +367,7 @@
     window.location.replace = function (url) {
       if (window.__WFB_ENABLED && isAdUrl(url)) {
         console.log('[StreamBlocker/MAIN] location.replace bloqué :', url);
+        reportBlocked(url);
         return;
       }
       return _origReplace(url);

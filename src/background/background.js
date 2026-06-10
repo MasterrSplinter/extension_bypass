@@ -145,6 +145,35 @@ async function incrementBlockedCount(hostname) {
   return newCount;
 }
 
+// ── Compteur par lots : les content scripts bloquent souvent en rafale
+//    (popups/_blank). On accumule en mémoire et on écrit le storage une fois
+//    par fenêtre courte pour éviter de marteler le disque. ──
+let _pendingTotal = 0;
+const _pendingHosts = Object.create(null);
+let _flushTimer = null;
+
+function queueBlocked(host) {
+  _pendingTotal++;
+  if (host) _pendingHosts[host] = (_pendingHosts[host] || 0) + 1;
+  if (_flushTimer) return;
+  _flushTimer = setTimeout(flushBlocked, 800);
+}
+
+async function flushBlocked() {
+  _flushTimer = null;
+  const total = _pendingTotal;
+  if (total === 0) return;
+  const hosts = { ..._pendingHosts };
+  _pendingTotal = 0;
+  for (const k in _pendingHosts) delete _pendingHosts[k];
+
+  const data = await chrome.storage.local.get(['blockedCount', 'blockedHistory']);
+  const history = data.blockedHistory || {};
+  for (const h in hosts) history[h] = (history[h] || 0) + hosts[h];
+  await chrome.storage.local.set({ blockedCount: (data.blockedCount || 0) + total, blockedHistory: history });
+  await updateBadge();
+}
+
 function notifyBlocked(hostname) {
   try {
     if (!chrome.notifications) return;
@@ -346,6 +375,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     lastUserClickTime = Date.now();
     lastUserClickTabId = (sender && sender.tab) ? sender.tab.id : -1;
     sendResponse({ ok: true });
+    return false;
+  }
+
+  // ── BLOCKED : un content script a bloqué un popup/lien/redirection pub ──
+  if (type === 'BLOCKED') {
+    if (isEnabled()) queueBlocked(message.host || null);
     return false;
   }
 
