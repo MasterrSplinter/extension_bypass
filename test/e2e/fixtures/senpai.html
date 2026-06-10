@@ -38,6 +38,11 @@
   <!-- Pub générique : doit être supprimée par removeAdElements -->
   <div id="popup-overlay" class="popup ad-banner">PUBLICITÉ</div>
 
+  <!-- Lecteur légitime : NE DOIT PAS être supprimé -->
+  <div id="player-container">
+    <video id="real-video" width="320" height="180"></video>
+  </div>
+
   <!-- Bouton Play final, cliqué par le bypass via _nativeClick -->
   <div id="watch-preloader">
     <button type="submit" onclick="window.__wfbPlayed = true;">Lancer la vidéo</button>

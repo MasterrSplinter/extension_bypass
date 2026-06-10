@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const customDomains = data.custom_domains || [];
 
       const isProtected = WFB_hostInList(hostname, STREAMING_SITES) ||
+                          WFB_patternInHost(hostname, WFB_BRAND_ROOTS) ||
                           WFB_hostInList(hostname, customDomains);
 
       if (isProtected) {

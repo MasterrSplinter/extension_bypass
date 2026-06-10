@@ -32,6 +32,10 @@ const AD_DOMAINS = WFB_AD_DOMAINS;
 const STREAMING_SITES = WFB_STREAMING_SITES;
 const WHITELIST_DOMAINS = WFB_NAV_WHITELIST;
 const PLAYER_SOURCE_PATTERNS = WFB_PLAYER_SOURCE_PATTERNS;
+const BRAND_ROOTS = WFB_BRAND_ROOTS;
+
+// Fichiers injectés dynamiquement sur un hôte reconnu par empreinte de marque.
+const CONTENT_FILES = ['shared/blocklists.js', 'shared/matchers.js', 'content/content.js'];
 
 // ══════════════════════════════════════════════════════════════
 // ÉTAT EN MÉMOIRE (cache pour éviter storage reads en boucle)
@@ -84,7 +88,9 @@ function isAdHostname(hostname) {
 function isWhitelistedHostname(hostname) {
   // hostname vide → considéré comme whitelisté (ne rien fermer).
   if (!WFB_normalizeHost(hostname)) return true;
-  return WFB_hostInList(hostname, WHITELIST_DOMAINS);
+  // Les sites reconnus par empreinte de marque ne sont jamais fermés comme pub.
+  return WFB_hostInList(hostname, WHITELIST_DOMAINS) ||
+         WFB_patternInHost(hostname, BRAND_ROOTS);
 }
 
 function isPlayerSource(hostname) {
@@ -93,7 +99,18 @@ function isPlayerSource(hostname) {
 
 function isStreamingSiteSource(hostname) {
   return WFB_hostInList(hostname, STREAMING_SITES) ||
+         WFB_patternInHost(hostname, BRAND_ROOTS) ||
          WFB_hostInList(hostname, _customDomainsCache);
+}
+
+// Hôte reconnu par empreinte de marque mais pas déjà couvert par le manifest
+// (liste exacte) ni par les domaines personnalisés → injection dynamique requise.
+function needsBrandInjection(hostname) {
+  const h = WFB_normalizeHost(hostname);
+  if (!h) return false;
+  if (WFB_hostInList(h, STREAMING_SITES)) return false;   // déjà via content_scripts statiques
+  if (WFB_hostInList(h, _customDomainsCache)) return false; // déjà via registerContentScripts
+  return WFB_patternInHost(h, BRAND_ROOTS);
 }
 
 function getHostname(url) {
@@ -198,6 +215,36 @@ async function registerCustomDomains(domains) {
     console.error('[StreamBlocker/SW] ❌ Erreur registerContentScripts:', err);
   }
 }
+
+// ══════════════════════════════════════════════════════════════
+// INJECTION PAR EMPREINTE DE MARQUE (résilience au changement de TLD)
+// ══════════════════════════════════════════════════════════════
+//
+// Les sites de streaming changent souvent de domaine (.quest → .monster …).
+// Le manifest ne peut pas matcher un TLD générique ; on injecte donc les scripts
+// dès qu'une navigation atteint un hôte reconnu par empreinte de marque.
+
+async function injectBrandScripts(tabId) {
+  if (!chrome.scripting || !chrome.scripting.executeScript) return;
+  try {
+    // content.js (monde ISOLATED) ; il injecte lui-même main_world.js (monde MAIN).
+    await chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: CONTENT_FILES
+    });
+  } catch (err) {
+    console.warn('[StreamBlocker/SW] Injection empreinte échouée:', err.message);
+  }
+}
+
+chrome.webNavigation.onCommitted.addListener(async (details) => {
+  if (details.frameId !== 0) return; // cadre principal ; allFrames couvre les iframes
+  if (!isEnabled()) return;
+  const hostname = getHostname(details.url);
+  if (!hostname || !needsBrandInjection(hostname)) return;
+  console.log(`[StreamBlocker/SW] 🔎 Empreinte reconnue, injection sur ${hostname}`);
+  await injectBrandScripts(details.tabId);
+});
 
 // ══════════════════════════════════════════════════════════════
 // LISTENER 1 : Nouvel onglet créé (window.open / target=_blank)

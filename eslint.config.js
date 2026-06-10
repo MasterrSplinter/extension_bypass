@@ -6,6 +6,7 @@ import globals from 'globals';
 const wfbGlobals = {
   WFB_AD_DOMAINS: 'readonly',
   WFB_STREAMING_SITES: 'readonly',
+  WFB_BRAND_ROOTS: 'readonly',
   WFB_NAV_WHITELIST: 'readonly',
   WFB_CLICK_WHITELIST: 'readonly',
   WFB_PLAYER_SOURCE_PATTERNS: 'readonly',

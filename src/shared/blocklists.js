@@ -40,6 +40,16 @@ var WFB_STREAMING_SITES = [
   'neko-sama.fr', 'anime-sama.fr', 'mavanime.org'
 ];
 
+// ── Empreintes de marque (sous-chaînes stables) : reconnaissent un site même
+//    si son TLD change (ex: senpai-stream.quest → senpai-stream.monster).
+//    Le service worker injecte les scripts sur tout hôte correspondant. ──
+var WFB_BRAND_ROOTS = [
+  'senpai-stream', 'webflix', 'french-stream', 'frenchstream', 'papystreaming',
+  'voiranime', 'filmcomplet', 'streamcomplet', 'wiflix', 'annuaire-telechargement',
+  'dpstreaming', 'cpasmieux', 'zone-telechargement', 'vostfree', 'neko-sama',
+  'anime-sama', 'mavanime'
+];
+
 // ── Whitelist « navigation » (large) : nouveaux onglets jamais fermés par le SW ──
 var WFB_NAV_WHITELIST = [
   // Sites de streaming
