@@ -34,7 +34,10 @@ function streamingSites() {
   return ctx.WFB_STREAMING_SITES;
 }
 const SITES = streamingSites();
-const TEST_HOSTS = new Set([...SITES, UNPROTECTED]);
+// Domaines à TLD inédit (jamais listés) : doivent être reconnus par EMPREINTE de
+// marque et protégés via l'injection dynamique du service worker.
+const BRAND_TLD_HOSTS = ['senpai-stream.monster', 'senpai-stream.brandnewtld'];
+const TEST_HOSTS = new Set([...SITES, ...BRAND_TLD_HOSTS, UNPROTECTED]);
 
 let context;
 
@@ -55,7 +58,7 @@ test.beforeAll(async () => {
     try { url = new URL(route.request().url()); } catch { return route.continue(); }
     if (!TEST_HOSTS.has(url.hostname)) return route.continue();
     let body = FIXTURES.generic;
-    if (url.pathname.startsWith('/senpai')) body = FIXTURES.senpai;
+    if (url.hostname.includes('senpai-stream') || url.pathname.startsWith('/senpai')) body = FIXTURES.senpai;
     else if (url.pathname.startsWith('/overlay')) body = FIXTURES.overlay;
     return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body });
   });
@@ -113,8 +116,32 @@ test('exécute le bypass Livewire de senpai-stream', async () => {
   await expect.poll(() => page.evaluate(() => window.__wfbSteps), { timeout: 12000 }).toBeGreaterThanOrEqual(5);
   await expect.poll(() => page.evaluate(() => window.__wfbPlayed), { timeout: 12000 }).toBe(true);
 
-  // La bannière d'abonnement (scam) est nettoyée par content.js.
-  await expect(page.locator('#promo')).toHaveCount(0, { timeout: 6000 });
+  // Nettoyage des scams senpai : Telegram, bannière image et bannière texte.
+  await expect(page.locator('#tg')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#promo-img-link')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#promo-text')).toHaveCount(0, { timeout: 6000 });
+  // Pub générique retirée, contenu légitime conservé.
+  await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#marker')).toHaveCount(1);
 
   await page.close();
 });
+
+// ── 5. Résilience au changement de domaine (empreinte de marque) ────────────
+// Ces TLD ne sont dans AUCUNE liste : seule la reconnaissance par empreinte +
+// l'injection dynamique du service worker peut les protéger.
+for (const host of BRAND_TLD_HOSTS) {
+  test(`protège un TLD inédit via empreinte : ${host}`, async () => {
+    test.setTimeout(20000);
+    const page = await context.newPage();
+    await page.goto(`https://${host}/`, { waitUntil: 'load' });
+
+    // Le service worker reconnaît « senpai-stream » et injecte les scripts.
+    await expect(page.locator('#tg')).toHaveCount(0, { timeout: 8000 });
+    await expect(page.locator('#promo-text')).toHaveCount(0, { timeout: 8000 });
+    await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 8000 });
+    await expect(page.locator('#marker')).toHaveCount(1);
+
+    await page.close();
+  });
+}
