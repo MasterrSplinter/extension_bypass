@@ -24,7 +24,8 @@ function readFixture(name) {
 const FIXTURES = {
   generic: readFixture('streaming.html'),
   senpai: readFixture('senpai.html'),
-  overlay: readFixture('overlay.html')
+  overlay: readFixture('overlay.html'),
+  empire: readFixture('empire.html')
 };
 
 // Liste des sites protégés depuis la source unique.
@@ -60,6 +61,7 @@ test.beforeAll(async () => {
     let body = FIXTURES.generic;
     if (url.hostname.includes('senpai-stream') || url.pathname.startsWith('/senpai')) body = FIXTURES.senpai;
     else if (url.pathname.startsWith('/overlay')) body = FIXTURES.overlay;
+    else if (url.pathname.startsWith('/empire')) body = FIXTURES.empire;
     return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body });
   });
 });
@@ -97,6 +99,23 @@ test('ne supprime pas l’UI légitime overlay/modal (anti faux positif)', async
   // …mais les éléments légitimes (classe overlay-/modal-, non publicitaires) restent.
   await expect(page.locator('#legit-overlay')).toHaveCount(1);
   await expect(page.locator('#legit-modal')).toHaveCount(1);
+  await page.close();
+});
+
+// ── 1c. Bypass Empire : auto-clic « Regarder la video », pas « Installer » ──
+test('skippe le mur d’installation d’Empire et lance le lecteur', async () => {
+  test.setTimeout(20000);
+  const page = await context.newPage();
+  await page.goto('https://empire-streaming.us/empire-watch', { waitUntil: 'load' });
+
+  // Le bypass clique « Regarder la video » → le lecteur apparaît.
+  await expect.poll(() => page.evaluate(() => window.__empireWatched === true), { timeout: 8000 }).toBe(true);
+  await expect(page.locator('#real-video')).toHaveCount(1, { timeout: 6000 });
+  // Les CTA d'installation (scam) sont retirés.
+  await expect(page.locator('#install-tv')).toHaveCount(0);
+  await expect(page.locator('#install-btn')).toHaveCount(0);
+  // On reste sur Empire (pas de navigation vers le site d'install).
+  expect(new URL(page.url()).hostname).toBe('empire-streaming.us');
   await page.close();
 });
 

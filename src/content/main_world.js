@@ -268,6 +268,40 @@
   }
 
   // ══════════════════════════════════════════════════════════════════
+  // SECTION E4 : Bypass Empire Streaming
+  // ══════════════════════════════════════════════════════════════════
+  // Après le clic sur un épisode, Empire affiche une bannière « player-mode »
+  // (mur d'incitation à installer une appli) avec 3 boutons : « Installer
+  // l'application », « Regarder la video », « J'ai deja l'application ».
+  // → on auto-clique « Regarder la video » et on retire les liens d'install.
+  function bypassEmpireStreaming() {
+    if (!window.__WFB_ENABLED) return;
+    if (!location.hostname.includes('empire-streaming')) return;
+
+    // Nettoyer les CTA d'installation d'application (scam) hors du lecteur.
+    document.querySelectorAll('a[href*="empire-application"], a[href*="empire-streamings."]').forEach(a => {
+      const wrap = a.closest('.banner-tv-container') || a;
+      try { wrap.remove(); } catch (e) {}
+    });
+
+    // Dans le mur de lecture, cliquer « Regarder la video » (jamais « Installer »).
+    const gate = document.querySelector('.player-mode, [class*="player-mode"]');
+    if (!gate) return;
+    const candidates = gate.querySelectorAll('button, a');
+    for (const el of candidates) {
+      const t = (el.innerText || el.textContent || '').trim().toLowerCase();
+      if (!t || /installer|application|d[ée]j[àa]/.test(t)) continue;
+      if (/regarder/.test(t)) {
+        if (el.dataset.wfbEmpire) return; // déjà cliqué une fois
+        el.dataset.wfbEmpire = '1';
+        console.log('[StreamBlocker/MAIN] Empire : auto-clic « Regarder la video »');
+        try { _nativeClick.call(el); } catch (e) { el.click(); }
+        return;
+      }
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
   // SECTION F : Masquer les overlays pub par CSS/DOM
   // ══════════════════════════════════════════════════════════════════
   function hideAdOverlays() {
@@ -347,6 +381,9 @@
       if (!senpaiBypassed) bypassSenpaiStream();
     } else if (location.hostname.includes('webflix.lol')) {
       if (!webflixBypassed) bypassWebflix();
+    } else if (location.hostname.includes('empire-streaming')) {
+      bypassEmpireStreaming();
+      hideAdOverlays();
     } else {
       bypassGenericStepOverlay();
       hideAdOverlays();
@@ -391,6 +428,16 @@
       }, 500);
       document.addEventListener('livewire:load', bypassSenpaiStream);
       document.addEventListener('livewire:init', bypassSenpaiStream);
+    } else if (location.hostname.includes('empire-streaming')) {
+      // Le mur « player-mode » apparaît après un clic épisode → on poll ~30s.
+      let attempts = 0;
+      const retryInterval = setInterval(() => {
+        if (!window.__WFB_ENABLED) { clearInterval(retryInterval); return; }
+        bypassEmpireStreaming();
+        hideAdOverlays();
+        attempts++;
+        if (attempts > 60) clearInterval(retryInterval);
+      }, 500);
     } else {
       let attempts = 0;
       const retryInterval = setInterval(() => {
