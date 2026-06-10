@@ -113,12 +113,8 @@
   // ══════════════════════════════════════════════════════════════════
   // #2 — NETTOYAGE DOM (overlays, scripts pub, éléments ad)
   // ══════════════════════════════════════════════════════════════════
-  const AD_SELECTORS = [
-    'div[class*="popup"]',
-    'div[class*="modal"]:not([class*="player"])',
-    'div[class*="overlay"]:not([class*="video"])',
-    'div[id*="popup"]', 'div[id*="overlay"]',
-    'div[id*="ad-"]', 'div[id*="-ad"]',
+  // Sélecteurs PRÉCIS : réseaux pub connus / widgets identifiés → suppression directe.
+  const PRECISE_AD_SELECTORS = [
     'div[class*="advert"]', 'div[class*="sponsor"]',
     'iframe[src*="popads"]', 'iframe[src*="popcash"]',
     'iframe[src*="exoclick"]', 'iframe[src*="adsterra"]',
@@ -136,16 +132,54 @@
     '[id*="outbrain"]', '[class*="outbrain"]'
   ];
 
+  // Sélecteurs STRUCTURELS : « popup/modal/overlay/ad- » sont des noms de classe
+  // très courants en UI légitime → on ne supprime que si l'élément ressemble
+  // vraiment à un overlay publicitaire (cf. looksLikeAdOverlay).
+  const STRUCTURAL_AD_SELECTORS = [
+    'div[class*="popup"]',
+    'div[class*="modal"]:not([class*="player"])',
+    'div[class*="overlay"]:not([class*="video"])',
+    'div[id*="popup"]', 'div[id*="overlay"]',
+    'div[id*="ad-"]', 'div[id*="-ad"]'
+  ];
+
+  // Un élément structurel n'est retiré que s'il porte une marque pub explicite,
+  // OU s'il a la forme d'un overlay pub (positionné + superposé ou couvrant).
+  function looksLikeAdOverlay(el) {
+    const hint = `${el.id || ''} ${el.className || ''}`.toLowerCase();
+    if (/advert|sponsor|ad-banner|adsby|ad-slot|ad-container|ad-wrapper|popunder/.test(hint)) return true;
+    let s;
+    try { s = window.getComputedStyle(el); } catch { return false; }
+    if (s.position !== 'fixed' && s.position !== 'absolute') return false;
+    const z = parseInt(s.zIndex, 10) || 0;
+    const r = el.getBoundingClientRect();
+    const covers = r.width > window.innerWidth * 0.5 && r.height > window.innerHeight * 0.3;
+    return z > 1000 || covers;
+  }
+
+  function inProtectedRegion(el) {
+    return !!(el.closest('#player-container') || el.closest('.video-player') || el.closest('video'));
+  }
+
   function removeAdElements() {
-      if (!protectionEnabled) return;
-      // Ne pas exécuter la suppression générique d'éléments dans les lecteurs vidéo
-      // car cela risque de supprimer des contrôles légitimes (ex: .loading-overlay)
-      if (location.pathname.includes('player') || location.hostname.includes('player') || location.hostname.includes('fastflux') || location.hostname.includes('embed')) return;
+    if (!protectionEnabled) return;
+    // Ne pas exécuter la suppression générique dans les lecteurs vidéo
+    // (risque de retirer des contrôles légitimes, ex: .loading-overlay).
+    if (location.pathname.includes('player') || location.hostname.includes('player') || location.hostname.includes('fastflux') || location.hostname.includes('embed')) return;
     let removed = 0;
-    AD_SELECTORS.forEach(selector => {
+    PRECISE_AD_SELECTORS.forEach(selector => {
       try {
         document.querySelectorAll(selector).forEach(el => {
-          if (el.closest('#player-container') || el.closest('.video-player') || el.closest('video')) return;
+          if (inProtectedRegion(el)) return;
+          el.remove();
+          removed++;
+        });
+      } catch (e) {}
+    });
+    STRUCTURAL_AD_SELECTORS.forEach(selector => {
+      try {
+        document.querySelectorAll(selector).forEach(el => {
+          if (inProtectedRegion(el) || !looksLikeAdOverlay(el)) return;
           el.remove();
           removed++;
         });
