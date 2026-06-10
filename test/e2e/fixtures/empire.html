@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Empire Streaming (fixture)</title></head>
+<body>
+  <h1>Empire Streaming</h1>
+
+  <!-- CTA d'installation scam hors lecteur : doit être retiré -->
+  <a id="install-tv" class="banner-tv-container" href="https://empire-application.com/starter">Installer l'application</a>
+
+  <!-- Mur « player-mode » affiché après le clic épisode -->
+  <div class="banner player-mode">
+    <a id="install-btn" href="https://empire-application.com/starter">Installer l'application</a>
+    <button id="watch-btn"
+      onclick="window.__empireWatched = true; document.getElementById('player').innerHTML = '<video id=&quot;real-video&quot;></video>';">
+      Regarder la video
+    </button>
+    <button id="have-app">J'ai deja l'application</button>
+  </div>
+
+  <div id="player"></div>
+  <p id="marker">contenu légitime</p>
+</body>
+</html>
