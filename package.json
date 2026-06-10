@@ -12,6 +12,7 @@
     "validate:manifests": "node scripts/validate-manifests.mjs",
     "lint:webext": "web-ext lint --source-dir dist/firefox --warnings-as-errors=false",
     "test:e2e": "playwright test",
+    "inspect": "node tools/inspect.mjs",
     "check": "npm run check:rules && npm run validate:manifests && npm run lint && npm run test",
     "build": "npm run gen:rules && bash build.sh"
   },
