@@ -7,7 +7,7 @@ New-Item -ItemType Directory -Force -Path dist\chrome | Out-Null
 New-Item -ItemType Directory -Force -Path dist\firefox | Out-Null
 
 # Liste des dossiers à copier
-$foldersToCopy = @("background", "content", "icons", "options", "popup", "rules")
+$foldersToCopy = @("background", "content", "icons", "options", "popup", "rules", "shared")
 
 foreach ($folder in $foldersToCopy) {
     if (Test-Path -Path "src\$folder") {

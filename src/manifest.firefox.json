@@ -57,6 +57,7 @@
         "*://*.senpai-stream.quest/*"
       ],
       "js": [
+        "shared/blocklists.js",
         "content/content.js"
       ],
       "css": [
@@ -73,6 +74,7 @@
   },
   "background": {
     "scripts": [
+      "shared/blocklists.js",
       "background/background.js"
     ]
   },

@@ -294,6 +294,11 @@
     "action": { "type": "block" },
     "condition": {
       "urlFilter": "*middle.html*",
+      "initiatorDomains": [
+        "webflix.lol", "senpai-stream.quest", "french-stream.ac", "frenchstream.wtf",
+        "papystreaming.tv", "voiranime.com", "filmcomplet.link", "streamcomplet.app",
+        "wiflix.st", "cpasmieux.com", "zone-telechargement.beauty"
+      ],
       "resourceTypes": ["main_frame", "sub_frame"]
     }
   },

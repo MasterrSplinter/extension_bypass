@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Brave-FF1B2D?style=for-the-badge&logo=Brave&logoColor=white" alt="Brave">
   <br>
   <img src="https://img.shields.io/badge/License-MIT-success?style=flat-square" alt="License: MIT">
-  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=flat-square" alt="Version: 1.0.0">
+  <img src="https://img.shields.io/badge/Version-1.6.0-blue?style=flat-square" alt="Version: 1.6.0">
 </p>
 
 > [!NOTE]

@@ -1,100 +1,45 @@
 /**
- * service_worker.js — Webflix AdBlocker Pro v1.5
- * Réécriture complète — architecture robuste
+ * background.js — Streaming AdBlocker Pro
+ * Service worker (Chrome) / event page (Firefox) — architecture robuste
  *
- * FIXES:
- *  ✅ Double listener onMessage supprimé (un seul handler)
- *  ✅ Cache en mémoire pour `enabled` (mis à jour par message)
- *  ✅ Heuristique timing corrigée (lastUserClickTime=0 = jamais cliqué)
- *  ✅ Alarmes créées sans doublons (clearAlarms avant)
- *  ✅ Badge mis à jour correctement
- *  ✅ rulesCount exposé dans GET_STATS
+ * Rôles :
+ *  - Cache mémoire de l'état `enabled` (mis à jour par message et storage)
+ *  - Fermeture des onglets/popups publicitaires (webNavigation + tabs.onUpdated)
+ *  - Heuristique timing reliée à l'onglet réellement cliqué
+ *  - Gestion des domaines personnalisés (registerContentScripts)
  */
 
 'use strict';
+
+// Charger les listes partagées. Chrome (vrai service worker) → importScripts ;
+// Firefox (event page) les reçoit déjà via le tableau `scripts` du manifest.
+if (typeof WFB_AD_DOMAINS === 'undefined' && typeof importScripts === 'function') {
+  importScripts('/shared/blocklists.js');
+}
 
 // ══════════════════════════════════════════════════════════════
 // CONFIGURATION
 // ══════════════════════════════════════════════════════════════
 
-const REMOTE_RULES_URL = 'https://raw.githubusercontent.com/webflix-adblocker/rules/main/rules.json';
 const HEURISTIC_WINDOW_MS = 800;
 const BADGE_COLOR = '#7c3aed';
 
 // ══════════════════════════════════════════════════════════════
-// LISTES
+// LISTES (source unique : shared/blocklists.js)
 // ══════════════════════════════════════════════════════════════
 
-const AD_DOMAINS = [
-  'popads.net', 'popcash.net', 'exoclick.com', 'trafficjunky.net',
-  'juicyads.com', 'adsterra.com', 'propellerads.com', 'hilltopads.net',
-  'bidvertiser.com', 'mgid.com', 'revcontent.com', 'taboola.com',
-  'outbrain.com', 'googlesyndication.com', 'doubleclick.net',
-  'googleadservices.com', 'adsafeprotected.com', 'pupupul.site',
-  'clkme.me', 'adspyglass.com', 'moonads.to', 'clickaine.com',
-  'tsyndicate.com', 'creativecdn.com', 'smartadserver.com', 'adbull.me',
-  'adnxs.com', 'sheety.co', 'moonadsq.to', 'miniroad.store',
-  'stake.com', 'playafterdark.com', 'otieu.com', 'foreignabnormality.com',
-  'adnium.com', 'plugrush.com', 'push.house', 'evadav.com',
-  'galaksion.com', 'kadam.net', 'richpush.co', 'traficshop.com',
-  'rtmark.net', 'adxpansion.com', 'jucyadsnew.com', 'ero-advertising.com',
-  'realsrv.com', 'adspirit.de', 'clicksfly.com', 'ouo.io',
-  'shrinkme.io', 'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com', 'northseize.com', 'pupupul.site'
-];
-
-const STREAMING_SITES = [
-  'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
-  'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
-  'annuaire-telechargement.art', 'dpstreaming.to', 'cpasmieux.com',
-  'zone-telechargement.beauty', 'vostfree.tv', 'neko-sama.fr',
-  'anime-sama.fr', 'mavanime.org'
-];
-
-const WHITELIST_DOMAINS = [
-  // Sites de streaming
-  'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
-  'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
-  // Lecteurs vidéo
-  'wavewatch.top', 'apis.wavewatch.top', 'bysebuho.com', 'nzn3.org',
-  'player4k.com', 'viperstreamz.com', 'viperstream.xyz', 'viperstre.am', 'viper4k.com',
-  'streamvid.net', 'embedme.top', 'embtaku.com',
-  'filemoon.sx', 'filemoon.in', 'filemoon.com', 'filemoon.to',
-  'doodstream.com', 'dood.wf', 'dood.cx', 'dood.la', 'dood.re', 'dood.pm',
-  'sibnet.ru', 'uqload.com', 'uqload.co', 'uqload.io',
-  'sendvid.com', 'streamlare.com', 'upstream.to', 'vidoza.net',
-  'voe.sx', 'voe.bar', 'voe.run', 'voe.click',
-  'streamtape.com', 'streamtape.net', 'streamtape.to',
-  'turbovid.me', 'supervideo.tv', 'netu.ac', 'netuplayer.top',
-  'mixdrop.ag', 'mixdrop.bz', 'mixdrop.ch', 'mixdrop.co', 'mixdrop.gl', 'mixdrop.to',
-  'myviid.eu', 'myviid.com', 'gounlimited.to', 'evoload.io',
-  'fembed.com', 'fembed.net', 'femax20.com', 'fembad.org', 'fvs.io',
-  'bflyv.com', 'fastream.to', 'mp4upload.com', 'flash-vars.com',
-  'wishembed.download', 'cloudvideo.tv', 'yourupload.com',
-  'aidolove.com', 'dropload.io', 'playerx.stream', 'hlsplayer.net',
-  'speedostream.com', 'streamta.pe', 'vidhd.fun', 'vidalyze.com',
-  'dailymotion.com', '1fichier.com',
-  // Services standards
-  'youtube.com', 'youtu.be', 'vimeo.com',
-  'googleapis.com', 'gstatic.com', 'cloudflare.com', 'jsdelivr.net',
-  'jwplatform.com', 'jwpcdn.com', 'google.com', 'bing.com',
-  'cdnjs.cloudflare.com', 'unpkg.com', 'ajax.googleapis.com',
-  'fonts.googleapis.com', 'fonts.gstatic.com'
-];
-
-const PLAYER_SOURCE_PATTERNS = ['smartlink', 
-  'wavewatch', 'bysebuho', 'nzn3', 'viperstream', 'viperstre', 'viper4k',
-  'filemoon', 'streamtape', 'dood', 'uqload', 'turbovid',
-  'supervideo', 'streamlare', 'player4k', 'embedme', 'embtaku', 'streamvid',
-  'mixdrop', 'myviid', 'gounlimited', 'fembed', 'mp4upload', 'cloudvideo'
-];
+const AD_DOMAINS = WFB_AD_DOMAINS;
+const STREAMING_SITES = WFB_STREAMING_SITES;
+const WHITELIST_DOMAINS = WFB_NAV_WHITELIST;
+const PLAYER_SOURCE_PATTERNS = WFB_PLAYER_SOURCE_PATTERNS;
 
 // ══════════════════════════════════════════════════════════════
 // ÉTAT EN MÉMOIRE (cache pour éviter storage reads en boucle)
 // ══════════════════════════════════════════════════════════════
 
 let _enabledCache = true;        // Cache de l'état ON/OFF
-let _enabledCacheReady = false;  // Indique si le cache a été initialisé
 let lastUserClickTime = 0;       // Timestamp du dernier clic utilisateur (0 = jamais)
+let lastUserClickTabId = -1;     // Onglet d'où provient ce clic (USER_CLICK ne vient que des sites protégés)
 let _customDomainsCache = [];    // Cache des domaines custom ajoutés
 
 // Charger l'état initial depuis le storage au démarrage du SW
@@ -102,7 +47,6 @@ async function initCache() {
   const data = await chrome.storage.local.get(['enabled', 'custom_domains']);
   _enabledCache = data.enabled !== false;
   _customDomainsCache = data.custom_domains || [];
-  _enabledCacheReady = true;
   console.log(`[StreamBlocker/SW] Cache initialisé: enabled=${_enabledCache}, custom=${_customDomainsCache.length}`);
   if (_customDomainsCache.length > 0) {
     registerCustomDomains(_customDomainsCache);
@@ -173,20 +117,13 @@ async function updateBadge() {
   try {
     const data = await chrome.storage.local.get(['blockedCount']);
     const count = data.blockedCount || 0;
-    const text = count > 0 ? String(count) : '';
-    const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      try {
-        if (!isEnabled()) {
-          await chrome.action.setBadgeText({ text: '', tabId: tab.id });
-        } else {
-          await chrome.action.setBadgeText({ text, tabId: tab.id });
-          if (count > 0) {
-            await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR, tabId: tab.id });
-          }
-        }
-      } catch {}
+    // Badge global (sans tabId) : O(1) au lieu d'un parcours de tous les onglets.
+    if (!isEnabled() || count === 0) {
+      await chrome.action.setBadgeText({ text: '' });
+      return;
     }
+    await chrome.action.setBadgeText({ text: String(count) });
+    await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR });
   } catch {}
 }
 
@@ -222,9 +159,6 @@ async function setupAlarms() {
   if (!names.includes('keepAlive')) {
     chrome.alarms.create('keepAlive', { periodInMinutes: 0.4 });
   }
-  if (!names.includes('updateRules')) {
-    chrome.alarms.create('updateRules', { periodInMinutes: 1440 });
-  }
 }
 setupAlarms();
 
@@ -233,44 +167,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     // Ping minimal — maintient le SW actif et rafraîchit le cache
     const data = await chrome.storage.local.get(['enabled']);
     _enabledCache = data.enabled !== false;
-  }
-  if (alarm.name === 'updateRules') {
-    await fetchAndUpdateRules();
-  }
-});
-
-// ══════════════════════════════════════════════════════════════
-// RÈGLES DISTANTES
-// ══════════════════════════════════════════════════════════════
-
-async function fetchAndUpdateRules() {
-  console.log('[StreamBlocker/SW] 🔄 Tentative MàJ règles distantes...');
-  try {
-    const response = await fetch(REMOTE_RULES_URL, { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const remoteRules = await response.json();
-    if (!Array.isArray(remoteRules) || remoteRules.length === 0) throw new Error('Format invalide');
-
-    const existing = await chrome.declarativeNetRequest.getDynamicRules();
-    const existingIds = existing.map(r => r.id);
-    const numberedRules = remoteRules.map((rule, i) => ({ ...rule, id: 1000 + i }));
-
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: existingIds,
-      addRules: numberedRules
-    });
-    await chrome.storage.local.set({ lastRulesUpdate: Date.now(), rulesCount: numberedRules.length });
-    console.log(`[StreamBlocker/SW] ✅ ${numberedRules.length} règles chargées`);
-  } catch (err) {
-    console.warn('[StreamBlocker/SW] ⚠️ Règles distantes non disponibles:', err.message);
-  }
-}
-
-// MàJ au démarrage si nécessaire (sans bloquer le SW)
-chrome.storage.local.get(['lastRulesUpdate']).then(data => {
-  const oneDayAgo = Date.now() - 86400000;
-  if (!data.lastRulesUpdate || data.lastRulesUpdate < oneDayAgo) {
-    fetchAndUpdateRules();
   }
 });
 
@@ -298,7 +194,7 @@ async function registerCustomDomains(domains) {
         {
           id: 'custom_streaming_isolated',
           matches: matches,
-          js: ['content/content.js'],
+          js: ['shared/blocklists.js', 'content/content.js'],
           css: ['content/content.css'],
           runAt: 'document_start',
           allFrames: false
@@ -356,9 +252,13 @@ chrome.webNavigation.onCreatedNavigationTarget.addListener(async (details) => {
     } catch {}
   }
 
-  // Heuristique timing : ouvert dans les 800ms d'un clic utilisateur
-  // IMPORTANT: lastUserClickTime=0 signifie "jamais cliqué", pas "clic il y a 0ms"
-  if (lastUserClickTime > 0) {
+  // Heuristique timing : popup ouvert dans les 800ms d'un clic utilisateur.
+  // Restreinte à l'onglet réellement cliqué (sourceTabId == onglet du dernier
+  // USER_CLICK), qui provient forcément d'un site protégé puisque les content
+  // scripts ne s'exécutent que là. Évite de fermer des onglets légitimes
+  // ouverts depuis d'autres pages dans la même fenêtre temporelle.
+  // NB: lastUserClickTime=0 signifie "jamais cliqué", pas "clic il y a 0ms".
+  if (lastUserClickTime > 0 && details.sourceTabId === lastUserClickTabId) {
     const timeSinceClick = Date.now() - lastUserClickTime;
     if (timeSinceClick >= 0 && timeSinceClick < HEURISTIC_WINDOW_MS) {
       console.log(`[StreamBlocker/SW] 🚫 Heuristique (${timeSinceClick}ms): ${hostname}`);
@@ -403,23 +303,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const type = message.type;
 
-  // ── USER_CLICK : horodater le clic ────────────────────────
+  // ── USER_CLICK : horodater le clic + mémoriser l'onglet source ──
   if (type === 'USER_CLICK') {
     lastUserClickTime = Date.now();
-    // Pas de sendResponse nécessaire, réponse synchrone
+    lastUserClickTabId = (sender && sender.tab) ? sender.tab.id : -1;
     sendResponse({ ok: true });
     return false;
   }
 
   // ── GET_STATS : statistiques complètes ────────────────────
   if (type === 'GET_STATS') {
-    chrome.storage.local.get(['blockedCount', 'blockedHistory', 'lastRulesUpdate', 'rulesCount'])
+    chrome.storage.local.get(['blockedCount', 'blockedHistory', 'rulesCount'])
       .then(data => {
         sendResponse({
           blockedCount:    data.blockedCount    || 0,
           blockedHistory:  data.blockedHistory  || {},
-          lastRulesUpdate: data.lastRulesUpdate || null,
-          rulesCount:      data.rulesCount      || 40,
+          rulesCount:      data.rulesCount      || WFB_DEFAULT_RULES_COUNT,
           enabled:         _enabledCache
         });
       });
@@ -457,15 +356,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.set({ blockedCount: 0, blockedHistory: {} }).then(async () => {
       await updateBadge();
       sendResponse({ ok: true });
-    });
-    return true; // Async
-  }
-
-  // ── UPDATE_RULES_NOW : forcer la MàJ des règles ────────────
-  if (type === 'UPDATE_RULES_NOW') {
-    fetchAndUpdateRules().then(async () => {
-      const data = await chrome.storage.local.get(['rulesCount', 'lastRulesUpdate']);
-      sendResponse({ ok: true, rulesCount: data.rulesCount || 40, lastRulesUpdate: data.lastRulesUpdate });
     });
     return true; // Async
   }
@@ -523,4 +413,4 @@ chrome.runtime.onInstalled.addListener(async () => {
 // Badge initial
 updateBadge();
 
-console.log('[StreamBlocker/SW] ✅ v1.5 démarré — Architecture robuste');
+console.log('[StreamBlocker/SW] ✅ Démarré — Streaming AdBlocker Pro');
