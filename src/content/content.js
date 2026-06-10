@@ -40,10 +40,11 @@
       syncEnabledToMainWorld(protectionEnabled);
 
       if (protectionEnabled) {
-        // Nettoyage initial uniquement si protection active
+        // Nettoyage initial + observer uniquement si protection active
         removeAdElements();
         removeAntiAdblockStyles();
         removeAntiAdblockMessages();
+        observer.observe(document.documentElement, observerConfig);
       }
 
       console.log(`[StreamBlocker] Protection ${protectionEnabled ? '✅ activée' : '⏸️ désactivée'} sur ${location.hostname}`);
@@ -321,27 +322,10 @@
   }, { capture: true, passive: true });
 
   // ══════════════════════════════════════════════════════════════════
-  // UTILITAIRES
+  // UTILITAIRES (listes : shared/blocklists.js, chargé avant content.js)
   // ══════════════════════════════════════════════════════════════════
-  const AD_DOMAINS = [
-    'popads.net', 'popcash.net', 'exoclick.com', 'trafficjunky.net',
-    'juicyads.com', 'adsterra.com', 'propellerads.com', 'hilltopads.net',
-    'bidvertiser.com', 'mgid.com', 'revcontent.com', 'taboola.com',
-    'outbrain.com', 'googlesyndication.com', 'doubleclick.net',
-    'googleadservices.com', 'adsafeprotected.com', 'pupupul.site',
-    'clkme.me', 'adspyglass.com', 'moonads.to', 'clickaine.com',
-    'tsyndicate.com', 'creativecdn.com', 'smartadserver.com', 'adbull.me',
-    'adnxs.com', 'sheety.co', 'moonadsq.to', 'miniroad.store',
-    'otieu.com', 'foreignabnormality.com', 'adnium.com', 'plugrush.com',
-    'northseize.com', 'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com'
-  ];
-
-  const WHITELIST_DOMAINS = [
-    'google.com', 'accounts.google.com', 'facebook.com', 'paypal.com',
-    'github.com', 'youtube.com', 'vimeo.com', 'dailymotion.com',
-    'googleapis.com', 'gstatic.com', 'cloudflare.com', 'jsdelivr.net',
-    'stripe.com', 'apple.com', 'microsoft.com'
-  ];
+  const AD_DOMAINS = WFB_AD_DOMAINS;
+  const WHITELIST_DOMAINS = WFB_CLICK_WHITELIST;
 
   function isAdUrl(url) {
     if (!url || typeof url !== 'string') return false;
@@ -360,17 +344,10 @@
   // DÉMARRAGE
   // ══════════════════════════════════════════════════════════════════
 
-  // 1. Charger l'état et synchroniser avec le MAIN world
+  // 1. Charger l'état, synchroniser avec le MAIN world et démarrer l'observer
   loadAndSyncEnabledState();
 
-  // 2. Démarrer l'observer si protection active (après loadAndSyncEnabledState)
-  chrome.storage.local.get(['enabled'], (data) => {
-    if (data.enabled !== false) {
-      observer.observe(document.documentElement, observerConfig);
-    }
-  });
-
-  // 3. Nettoyage périodique (seulement si actif)
+  // 2. Nettoyage périodique (seulement si actif)
   setInterval(() => {
     if (!protectionEnabled) return;
     removeAdElements();

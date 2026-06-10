@@ -31,13 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const addDomainBtn   = document.getElementById('addDomainBtn');
   const currentDomainLabel = document.getElementById('currentDomainLabel');
 
-  const STREAMING_SITES = [
-    'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
-    'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
-    'annuaire-telechargement.art', 'dpstreaming.to', 'cpasmieux.com',
-    'zone-telechargement.beauty', 'vostfree.tv', 'neko-sama.fr',
-    'anime-sama.fr', 'mavanime.org'
-  ];
+  // Liste partagée : shared/blocklists.js, chargé avant popup.js dans popup.html
+  const STREAMING_SITES = WFB_STREAMING_SITES;
 
   // ─── État local ──────────────────────────────────────────────────────────────
   let currentEnabled = true;
@@ -66,12 +61,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function applyStats(stats) {
     if (blockedCountEl) blockedCountEl.textContent = formatNumber(stats.blockedCount || 0);
-    if (rulesCountEl)   rulesCountEl.textContent   = String(stats.rulesCount || 40);
+    if (rulesCountEl)   rulesCountEl.textContent   = String(stats.rulesCount || WFB_DEFAULT_RULES_COUNT);
     if (rulesInfo) {
       const lastUpdate = stats.lastRulesUpdate
         ? new Date(stats.lastRulesUpdate).toLocaleDateString('fr-FR')
         : 'jamais';
-      rulesInfo.textContent = `${stats.rulesCount || 40} règles · MàJ : ${lastUpdate}`;
+      rulesInfo.textContent = `${stats.rulesCount || WFB_DEFAULT_RULES_COUNT} règles · MàJ : ${lastUpdate}`;
     }
     renderHistory(stats.blockedHistory || {});
   }
@@ -79,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function applyStorageData(data) {
     const count   = data.blockedCount || 0;
     const history = data.blockedHistory || {};
-    const rules   = data.rulesCount || 40;
+    const rules   = data.rulesCount || WFB_DEFAULT_RULES_COUNT;
 
     if (blockedCountEl) blockedCountEl.textContent = formatNumber(count);
     if (rulesCountEl)   rulesCountEl.textContent   = String(rules);
@@ -104,12 +99,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderHistory(changes.blockedHistory.newValue || {});
     }
     if (changes.rulesCount) {
-      const rules = changes.rulesCount.newValue || 40;
+      const rules = changes.rulesCount.newValue || WFB_DEFAULT_RULES_COUNT;
       if (rulesCountEl) rulesCountEl.textContent = String(rules);
     }
     if (changes.lastRulesUpdate) {
       const lastUpdate = new Date(changes.lastRulesUpdate.newValue).toLocaleDateString('fr-FR');
-      const rules = changes.rulesCount?.newValue || (rulesCountEl ? rulesCountEl.textContent : 40);
+      const rules = changes.rulesCount?.newValue || (rulesCountEl ? rulesCountEl.textContent : WFB_DEFAULT_RULES_COUNT);
       if (rulesInfo) rulesInfo.textContent = `${rules} règles · MàJ : ${lastUpdate}`;
     }
     if (changes.enabled !== undefined) {

@@ -395,6 +395,10 @@
 
   // ══════════════════════════════════════════════════════════════════
   // UTILITAIRES
+  //
+  // NOTE : ce script s'exécute dans le monde MAIN (contexte de la page) et ne
+  // peut pas lire les globales de shared/blocklists.js (monde ISOLATED). Ces
+  // listes doivent rester synchronisées avec WFB_AD_DOMAINS / WFB_CLICK_WHITELIST.
   // ══════════════════════════════════════════════════════════════════
   const AD_DOMAINS = [
     'popads.net', 'popcash.net', 'exoclick.com', 'trafficjunky.net',
@@ -407,8 +411,10 @@
     'adnxs.com', 'sheety.co', 'moonadsq.to', 'miniroad.store',
     'stake.com', 'playafterdark.com', 'otieu.com', 'foreignabnormality.com',
     'adnium.com', 'plugrush.com', 'push.house', 'evadav.com',
-    'galaksion.com', 'kadam.net', 'richpush.co', 'northseize.com',
-    'exe.io', 'short.pe', 'gplinks.co', 'realsrv.com'
+    'galaksion.com', 'kadam.net', 'richpush.co', 'traficshop.com',
+    'rtmark.net', 'adxpansion.com', 'jucyadsnew.com', 'ero-advertising.com',
+    'realsrv.com', 'adspirit.de', 'clicksfly.com', 'ouo.io',
+    'shrinkme.io', 'exe.io', 'short.pe', 'gplinks.co', 'northseize.com'
   ];
 
   const WHITELIST = [
