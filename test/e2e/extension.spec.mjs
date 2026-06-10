@@ -1,77 +1,120 @@
 /**
- * Test e2e : charge le build dist/chrome dans un vrai Chromium et vérifie que
- * le blocage in-page fonctionne sur un hôte « streaming » simulé.
+ * Tests e2e : charge le build dist/chrome dans un vrai Chromium et vérifie le
+ * blocage in-page sur CHAQUE site de streaming protégé (hôtes simulés).
  *
- * Astuce : --host-resolver-rules fait croire au navigateur que la fixture locale
- * est servie depuis anime-sama.fr, ce qui déclenche l'injection des content
- * scripts (matche *://*.anime-sama.fr/*). On vérifie ainsi le correctif réel.
+ * Les fixtures sont servies par interception réseau Playwright (context.route) :
+ * pas de serveur ni de TLS, et on évite l'upgrade HSTS forcé de certains TLD
+ * (.app). Le navigateur considère la page comme servie depuis le vrai domaine,
+ * ce qui déclenche l'injection des content scripts (matche *://*.<domaine>/*).
  */
 import { test, expect, chromium } from '@playwright/test';
-import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const EXT = resolve(HERE, '../../dist/chrome');
-const FIXTURE = readFileSync(resolve(HERE, 'fixtures/streaming.html'), 'utf8');
-const PORT = 8973;
-const PROTECTED = 'anime-sama.fr';    // mappé → 127.0.0.1
-const UNPROTECTED = 'notprotected.test'; // mappé → 127.0.0.1 (contrôle négatif)
+const ROOT = resolve(HERE, '../..');
+const EXT = resolve(ROOT, 'dist/chrome');
+const UNPROTECTED = 'notprotected.test';
 
-let server, context;
+function readFixture(name) {
+  return readFileSync(resolve(HERE, 'fixtures', name), 'utf8');
+}
+const FIXTURES = {
+  generic: readFixture('streaming.html'),
+  senpai: readFixture('senpai.html'),
+  overlay: readFixture('overlay.html')
+};
+
+// Liste des sites protégés depuis la source unique.
+function streamingSites() {
+  const ctx = vm.createContext({ URL, console });
+  vm.runInContext(readFileSync(resolve(ROOT, 'src/shared/blocklists.js'), 'utf8'), ctx);
+  return ctx.WFB_STREAMING_SITES;
+}
+const SITES = streamingSites();
+const TEST_HOSTS = new Set([...SITES, UNPROTECTED]);
+
+let context;
 
 test.beforeAll(async () => {
-  // Serveur statique : renvoie la fixture quel que soit le chemin.
-  server = createServer((_req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(FIXTURE);
-  });
-  await new Promise((r) => server.listen(PORT, '127.0.0.1', r));
-
   context = await chromium.launchPersistentContext('', {
     headless: false, // requis pour charger une extension (tourne sous xvfb)
     args: [
       '--headless=new',
       `--disable-extensions-except=${EXT}`,
-      `--load-extension=${EXT}`,
-      `--host-resolver-rules=MAP ${PROTECTED} 127.0.0.1, MAP ${UNPROTECTED} 127.0.0.1`
+      `--load-extension=${EXT}`
     ]
+  });
+
+  // Sert la fixture adaptée pour nos hôtes de test ; laisse tout le reste passer
+  // (ressources de l'extension, etc.).
+  await context.route('**/*', (route) => {
+    let url;
+    try { url = new URL(route.request().url()); } catch { return route.continue(); }
+    if (!TEST_HOSTS.has(url.hostname)) return route.continue();
+    let body = FIXTURES.generic;
+    if (url.pathname.startsWith('/senpai')) body = FIXTURES.senpai;
+    else if (url.pathname.startsWith('/overlay')) body = FIXTURES.overlay;
+    return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body });
   });
 });
 
 test.afterAll(async () => {
   await context?.close();
-  await new Promise((r) => server.close(r));
 });
 
-test('injecte les content scripts et supprime la pub sur un site protégé', async () => {
+// ── 1. Injection + blocage générique sur CHAQUE site protégé ────────────────
+for (const site of SITES) {
+  test(`injecte et supprime la pub sur ${site}`, async () => {
+    const page = await context.newPage();
+    const logs = [];
+    page.on('console', (m) => logs.push(m.text()));
+
+    await page.goto(`https://${site}/`, { waitUntil: 'load' });
+
+    // La pub disparaît (preuve que content.js s'est injecté et a tourné).
+    await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 6000 });
+    // Le lecteur légitime reste.
+    await expect(page.locator('#player-container')).toHaveCount(1);
+    // Activation journalisée sur le bon hôte.
+    await expect.poll(() => logs.some((l) => l.includes(site)), { timeout: 6000 }).toBe(true);
+
+    await page.close();
+  });
+}
+
+// ── 2. Scoping : aucune injection sur un hôte non protégé ───────────────────
+test('n’injecte PAS sur un hôte non protégé', async () => {
   const page = await context.newPage();
-  const logs = [];
-  page.on('console', (msg) => logs.push(msg.text()));
-
-  await page.goto(`http://${PROTECTED}:${PORT}/`, { waitUntil: 'load' });
-
-  // La pub doit disparaître (preuve que content.js s'est injecté et a tourné).
-  await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 5000 });
-
-  // Le lecteur légitime et le contenu doivent rester.
-  await expect(page.locator('#player-container')).toHaveCount(1);
-  await expect(page.locator('#marker')).toHaveCount(1);
-
-  // Le content script journalise son activation sur le bon hôte.
-  await expect.poll(() => logs.some((l) => l.includes('anime-sama.fr')), { timeout: 5000 }).toBe(true);
-
+  await page.goto(`https://${UNPROTECTED}/`, { waitUntil: 'load' });
+  await page.waitForTimeout(1500);
+  await expect(page.locator('#popup-overlay')).toHaveCount(1);
   await page.close();
 });
 
-test('n’injecte PAS sur un hôte non protégé (scoping correct)', async () => {
+// ── 3. main_world : un overlay géant pub est retiré ─────────────────────────
+test('retire l’overlay géant publicitaire (main_world)', async () => {
   const page = await context.newPage();
-  await page.goto(`http://${UNPROTECTED}:${PORT}/`, { waitUntil: 'load' });
+  await page.goto('https://french-stream.ac/overlay', { waitUntil: 'load' });
+  await expect(page.locator('#giant-ad')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#marker')).toHaveCount(1);
+  await page.close();
+});
 
-  // Sans content script, la pub reste présente.
-  await page.waitForTimeout(1500);
-  await expect(page.locator('#popup-overlay')).toHaveCount(1);
+// ── 4. Bypass spécifique senpai-stream (flux Livewire) ──────────────────────
+test('exécute le bypass Livewire de senpai-stream', async () => {
+  test.setTimeout(25000);
+  const page = await context.newPage();
+  await page.goto('https://senpai-stream.quest/senpai', { waitUntil: 'load' });
+
+  // Le bypass appelle incrementSteps (≥5) puis clique le bouton Play.
+  await expect.poll(() => page.evaluate(() => window.__wfbSteps), { timeout: 12000 }).toBeGreaterThanOrEqual(5);
+  await expect.poll(() => page.evaluate(() => window.__wfbPlayed), { timeout: 12000 }).toBe(true);
+
+  // La bannière d'abonnement (scam) est nettoyée par content.js.
+  await expect(page.locator('#promo')).toHaveCount(0, { timeout: 6000 });
 
   await page.close();
 });
