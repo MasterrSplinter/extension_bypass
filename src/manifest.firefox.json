@@ -57,7 +57,11 @@
         "*://*.cpasmieux.com/*",
         "*://*.cpasmieux.pro/*",
         "*://*.zone-telechargement.beauty/*",
-        "*://*.senpai-stream.quest/*"
+        "*://*.senpai-stream.quest/*",
+        "*://*.vostfree.tv/*",
+        "*://*.neko-sama.fr/*",
+        "*://*.anime-sama.fr/*",
+        "*://*.mavanime.org/*"
       ],
       "js": [
         "shared/blocklists.js",
