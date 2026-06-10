@@ -61,7 +61,8 @@
         "*://*.vostfree.tv/*",
         "*://*.neko-sama.fr/*",
         "*://*.anime-sama.fr/*",
-        "*://*.mavanime.org/*"
+        "*://*.mavanime.org/*",
+        "*://*.empire-streaming.us/*"
       ],
       "js": [
         "shared/blocklists.js",

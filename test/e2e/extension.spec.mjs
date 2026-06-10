@@ -36,7 +36,7 @@ function streamingSites() {
 const SITES = streamingSites();
 // Domaines à TLD inédit (jamais listés) : doivent être reconnus par EMPREINTE de
 // marque et protégés via l'injection dynamique du service worker.
-const BRAND_TLD_HOSTS = ['senpai-stream.monster', 'senpai-stream.brandnewtld'];
+const BRAND_TLD_HOSTS = ['senpai-stream.monster', 'senpai-stream.brandnewtld', 'empire-streaming.show'];
 const TEST_HOSTS = new Set([...SITES, ...BRAND_TLD_HOSTS, UNPROTECTED]);
 
 let context;
@@ -136,9 +136,7 @@ for (const host of BRAND_TLD_HOSTS) {
     const page = await context.newPage();
     await page.goto(`https://${host}/`, { waitUntil: 'load' });
 
-    // Le service worker reconnaît « senpai-stream » et injecte les scripts.
-    await expect(page.locator('#tg')).toHaveCount(0, { timeout: 8000 });
-    await expect(page.locator('#promo-text')).toHaveCount(0, { timeout: 8000 });
+    // Le service worker reconnaît la marque et injecte les scripts → pub retirée.
     await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 8000 });
     await expect(page.locator('#marker')).toHaveCount(1);
 

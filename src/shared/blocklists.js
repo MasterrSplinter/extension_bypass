@@ -37,7 +37,7 @@ var WFB_STREAMING_SITES = [
   'papystreaming.tv', 'voiranime.com', 'filmcomplet.link', 'streamcomplet.app',
   'wiflix.st', 'annuaire-telechargement.art', 'dpstreaming.to', 'dpstreaming.ink',
   'cpasmieux.com', 'cpasmieux.pro', 'zone-telechargement.beauty', 'vostfree.tv',
-  'neko-sama.fr', 'anime-sama.fr', 'mavanime.org'
+  'neko-sama.fr', 'anime-sama.fr', 'mavanime.org', 'empire-streaming.us'
 ];
 
 // ── Empreintes de marque (sous-chaînes stables) : reconnaissent un site même
@@ -47,14 +47,14 @@ var WFB_BRAND_ROOTS = [
   'senpai-stream', 'webflix', 'french-stream', 'frenchstream', 'papystreaming',
   'voiranime', 'filmcomplet', 'streamcomplet', 'wiflix', 'annuaire-telechargement',
   'dpstreaming', 'cpasmieux', 'zone-telechargement', 'vostfree', 'neko-sama',
-  'anime-sama', 'mavanime'
+  'anime-sama', 'mavanime', 'empire-streaming'
 ];
 
 // ── Whitelist « navigation » (large) : nouveaux onglets jamais fermés par le SW ──
 var WFB_NAV_WHITELIST = [
   // Sites de streaming
   'senpai-stream.quest', 'webflix.lol', 'french-stream.ac', 'frenchstream.wtf', 'papystreaming.tv',
-  'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st',
+  'voiranime.com', 'filmcomplet.link', 'streamcomplet.app', 'wiflix.st', 'empire-streaming.us',
   // Lecteurs vidéo
   'wavewatch.top', 'apis.wavewatch.top', 'bysebuho.com', 'nzn3.org',
   'player4k.com', 'viperstreamz.com', 'viperstream.xyz', 'viperstre.am', 'viper4k.com',
