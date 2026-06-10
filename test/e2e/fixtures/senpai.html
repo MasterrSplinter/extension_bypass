@@ -24,12 +24,25 @@
 <body>
   <h1>Senpai Stream (fixture)</h1>
 
-  <!-- Bannière d'abonnement (scam) : doit être nettoyée par content.js -->
-  <div id="promo">Abonnement disponible en cryptomonnaies</div>
+  <!-- Lien Telegram (scam) : doit être supprimé par cleanSenpaiStreamScams -->
+  <a id="tg" href="https://t.me/senpaistream">Rejoins notre Telegram</a>
+
+  <!-- Bannière image d'abonnement : doit être supprimée -->
+  <a id="promo-img-link" href="/abonnement">
+    <img id="promo-img" src="/storage/banners/abonnements.png" alt="abo">
+  </a>
+
+  <!-- Bannière texte d'abonnement : doit être supprimée -->
+  <div id="promo-text">Abonnement disponible en cryptomonnaies</div>
+
+  <!-- Pub générique : doit être supprimée par removeAdElements -->
+  <div id="popup-overlay" class="popup ad-banner">PUBLICITÉ</div>
 
   <!-- Bouton Play final, cliqué par le bypass via _nativeClick -->
   <div id="watch-preloader">
     <button type="submit" onclick="window.__wfbPlayed = true;">Lancer la vidéo</button>
   </div>
+
+  <p id="marker">contenu légitime</p>
 </body>
 </html>

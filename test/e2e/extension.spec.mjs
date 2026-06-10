@@ -113,8 +113,13 @@ test('exécute le bypass Livewire de senpai-stream', async () => {
   await expect.poll(() => page.evaluate(() => window.__wfbSteps), { timeout: 12000 }).toBeGreaterThanOrEqual(5);
   await expect.poll(() => page.evaluate(() => window.__wfbPlayed), { timeout: 12000 }).toBe(true);
 
-  // La bannière d'abonnement (scam) est nettoyée par content.js.
-  await expect(page.locator('#promo')).toHaveCount(0, { timeout: 6000 });
+  // Nettoyage des scams senpai : Telegram, bannière image et bannière texte.
+  await expect(page.locator('#tg')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#promo-img-link')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#promo-text')).toHaveCount(0, { timeout: 6000 });
+  // Pub générique retirée, contenu légitime conservé.
+  await expect(page.locator('#popup-overlay')).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator('#marker')).toHaveCount(1);
 
   await page.close();
 });
